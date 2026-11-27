@@ -1,34 +1,37 @@
+# Проекты Алексея Старкова
+
+API на Go, Telegram-боты и небольшие инструменты на Go, Python, Node.js и Rust.
+
+**[Открыть сайт портфолио](https://mainstarkov.github.io/portfolio-projects/)** · [Попробовать примеры API](https://mainstarkov.github.io/portfolio-projects/#lab) · [Весь каталог](https://mainstarkov.github.io/portfolio-projects/#projects)
+
 <picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/hedgehog.png">
   <img src="assets/hedgehog.gif" alt="mainstarkov — пиксельный ёжик на фиолетовом фоне. Go, Python, Node.js и Rust." width="960">
 </picture>
 
-# Привет, я mainstarkov 🦔
+## Бэкенд на Go
 
-Делаю Telegram-ботов, веб-приложения и утилиты для повседневных задач. Пишу на Go, Python и Node.js. Осваиваю Rust на небольших инструментах для терминала.
+| Сервис | Что делает | Локальный адрес | Демо |
+| :--- | :--- | :--- | :--- |
+| [Ссылки с TTL](projects/go/go-expiring-links) | Выдаёт короткую ссылку и перенаправляет до окончания срока | `http://127.0.0.1:8081` | [Запрос и ответ](https://mainstarkov.github.io/portfolio-projects/go-expiring-links/) |
+| [Очередь задач](projects/go/go-job-queue) | Выполняет задачи в фоновом воркере и выдаёт результат по ID | `http://127.0.0.1:8083` | [Запрос и ответ](https://mainstarkov.github.io/portfolio-projects/go-job-queue/) |
+| [Приём событий](projects/go/go-event-inbox) | Ведёт журнал событий, распознаёт повторы и конфликты | `http://127.0.0.1:8084` | [Запрос и ответ](https://mainstarkov.github.io/portfolio-projects/go-event-inbox/) |
 
-## Избранные проекты
+Для запуска сервиса перейдите в его папку и выполните `go run .` (Go 1.22+). Примеры `curl` находятся в README каждого сервиса.
 
-| Проект | Что делает |
-| :--- | :--- |
-| [EZText](https://github.com/mainstarkov/eztext-practice) | Учебный проект по распознаванию текста с Telegram-ботом и HTTP API. |
-| [Spy Bot](https://github.com/mainstarkov/spy-bot) | Проводит игру «Шпион» в компании друзей в Telegram. |
-| [TripPlan](https://github.com/mainstarkov/tripplan) | Помогает собрать план поездки. |
+## Запустить витрину локально
 
+```sh
+git clone https://github.com/mainstarkov/portfolio-projects.git
+cd portfolio-projects
+python3 -m http.server 8000 --bind 127.0.0.1 --directory docs
+```
 
-## Каталог мини-проектов
+Откройте http://127.0.0.1:8000. Интернет нужен для перехода к отдельным репозиториям и опубликованным демо.
 
-27 небольших проектов на Go, Python, Node.js и Rust. Каждый можно запустить отдельно по инструкции в его README.
-
-Запускаемые лендинги размещены на GitHub Pages.
-
-[Открыть каталог демонстраций](https://mainstarkov.github.io/portfolio-projects/).
+## Мини-проекты
 
 ### Go
-
-- [Ссылки с TTL](projects/go/go-expiring-links) — HTTP API для временных ссылок. Создаёт случайный идентификатор и перенаправляет до истечения срока. [Пример API](https://mainstarkov.github.io/portfolio-projects/go-expiring-links/).
-- [Очередь задач](projects/go/go-job-queue) — HTTP API с фоновой очередью. Воркер вычисляет SHA-256 и сохраняет результат для запроса статуса. [Пример API](https://mainstarkov.github.io/portfolio-projects/go-job-queue/).
-- [Приём событий](projects/go/go-event-inbox) — HTTP API с журналом последних 100 событий и защитой от повторной записи одного события. [Пример API](https://mainstarkov.github.io/portfolio-projects/go-event-inbox/).
 
 - [go-dir-weight](https://github.com/mainstarkov/go-dir-weight) — Показывает размер файлов по папкам первого уровня. Символические ссылки пропускаются.
 - [go-file-fingerprint](https://github.com/mainstarkov/go-file-fingerprint) — Вычисляет SHA-256 файла и умеет сверять его с ожидаемой контрольной суммой.
