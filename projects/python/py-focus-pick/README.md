@@ -14,6 +14,6 @@ python3 main.py example.csv
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-focus-pick/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/py-focus-pick/).
 
 Терминальная утилита, HTTP-порт не требуется.

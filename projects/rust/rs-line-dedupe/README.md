@@ -14,6 +14,6 @@ cargo run -- example.txt
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-line-dedupe/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-line-dedupe/).
 
 Терминальная утилита, HTTP-порт не требуется.

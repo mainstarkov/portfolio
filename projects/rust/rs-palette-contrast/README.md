@@ -14,6 +14,6 @@ cargo run -- '#202020' '#ffffff'
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-palette-contrast/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-palette-contrast/).
 
 Терминальная утилита, HTTP-порт не требуется.

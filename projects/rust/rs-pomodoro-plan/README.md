@@ -14,6 +14,6 @@ cargo run -- 3 25 5
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-pomodoro-plan/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-pomodoro-plan/).
 
 Терминальная утилита, HTTP-порт не требуется.

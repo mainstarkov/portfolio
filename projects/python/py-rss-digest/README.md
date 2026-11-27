@@ -14,6 +14,6 @@ python3 main.py example.xml --limit 5
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-rss-digest/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/py-rss-digest/).
 
 Терминальная утилита, HTTP-порт не требуется.

@@ -2,7 +2,7 @@
 
 HTTP API для временных ссылок. Создаёт случайный идентификатор и перенаправляет до истечения срока.
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/go-expiring-links/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/go-expiring-links/).
 
 ## Запуск
 

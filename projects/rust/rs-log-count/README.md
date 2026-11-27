@@ -14,6 +14,6 @@ cargo run -- example.log
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-log-count/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-log-count/).
 
 Терминальная утилита, HTTP-порт не требуется.

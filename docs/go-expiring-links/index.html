@@ -9,7 +9,7 @@ a{color:#ffbd89}.top{display:flex;gap:24px;flex-wrap:wrap}.box{padding:24px;marg
 pre{background:#14151d;padding:15px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;color:#d6f9e9}
 ul{padding-left:1.2rem;line-height:1.9}.list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;padding:0;list-style:none}.list a{display:block;background:#1d1f2a;border:1px solid #3c3e52;padding:10px 14px;border-radius:9px}
 </style></head>
-<body><main class="wrap"><nav class="top"><a href="https://github.com/mainstarkov">mainstarkov</a><a href="https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-expiring-links">Исходники ↗</a></nav>
+<body><main class="wrap"><nav class="top"><a href="https://github.com/mainstarkov">mainstarkov</a><a href="https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-expiring-links">Исходники ↗</a></nav>
 <h1>Ссылки с TTL</h1><p class="lead">HTTP API для временных ссылок. Создаёт случайный идентификатор и перенаправляет до истечения срока.</p><section class="box"><h2>Локальный запуск</h2><pre>go run .</pre><p>Сервис слушает http://127.0.0.1:8081. Данные хранятся в памяти до остановки процесса.</p></section><section class="box"><h2>Пример работы</h2><pre>201 Created
 {&quot;path&quot;:&quot;/r/0123456789abcdef01234567&quot;}
 

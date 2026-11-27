@@ -1,5 +1,17 @@
 [
   {
+    "name": "repomap",
+    "title": "RepoMap",
+    "description": "Строит интерактивную карту из исходников Git: переходы сайта, HTTP-маршруты, команды и кнопки Telegram-бота.",
+    "stack": "Go / Инструменты",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/repomap",
+    "demo": "repomap/",
+    "live": false
+  },
+  {
     "name": "go-expiring-links",
     "title": "Ссылки с TTL",
     "description": "HTTP API для временных ссылок и перенаправлений.",
@@ -8,7 +20,7 @@
       "go",
       "backend"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-expiring-links",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-expiring-links",
     "demo": "go-expiring-links/",
     "live": false
   },
@@ -21,7 +33,7 @@
       "go",
       "backend"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-job-queue",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-job-queue",
     "demo": "go-job-queue/",
     "live": false
   },
@@ -34,7 +46,7 @@
       "go",
       "backend"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-event-inbox",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-event-inbox",
     "demo": "go-event-inbox/",
     "live": false
   },
@@ -86,7 +98,7 @@
       "python",
       "backend"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-study-telegram",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-study-telegram",
     "demo": "py-study-telegram/",
     "live": false
   },
@@ -219,7 +231,7 @@
     "filters": [
       "node"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/nodejs/node-decision-bot",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/nodejs/node-decision-bot",
     "demo": "node-decision-bot/",
     "live": false
   },
@@ -231,7 +243,7 @@
     "filters": [
       "node"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/nodejs/node-dev-port",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/nodejs/node-dev-port",
     "demo": "node-dev-port/",
     "live": false
   },
@@ -243,7 +255,7 @@
     "filters": [
       "node"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/nodejs/node-query-card",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/nodejs/node-query-card",
     "demo": "node-query-card/",
     "live": false
   },
@@ -291,7 +303,7 @@
     "filters": [
       "python"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-focus-pick",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-focus-pick",
     "demo": "py-focus-pick/",
     "live": false
   },
@@ -303,7 +315,7 @@
     "filters": [
       "python"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-markdown-index",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-markdown-index",
     "demo": "py-markdown-index/",
     "live": false
   },
@@ -315,7 +327,7 @@
     "filters": [
       "python"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-rss-digest",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-rss-digest",
     "demo": "py-rss-digest/",
     "live": false
   },
@@ -327,7 +339,7 @@
     "filters": [
       "python"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-srt-shift",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-srt-shift",
     "demo": "py-srt-shift/",
     "live": false
   },
@@ -339,7 +351,7 @@
     "filters": [
       "python"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-subscription-ledger",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-subscription-ledger",
     "demo": "py-subscription-ledger/",
     "live": false
   },
@@ -363,7 +375,7 @@
     "filters": [
       "rust"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-line-dedupe",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-line-dedupe",
     "demo": "rs-line-dedupe/",
     "live": false
   },
@@ -375,7 +387,7 @@
     "filters": [
       "rust"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-log-count",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-log-count",
     "demo": "rs-log-count/",
     "live": false
   },
@@ -387,7 +399,7 @@
     "filters": [
       "rust"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-palette-contrast",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-palette-contrast",
     "demo": "rs-palette-contrast/",
     "live": false
   },
@@ -399,7 +411,7 @@
     "filters": [
       "rust"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-pomodoro-plan",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-pomodoro-plan",
     "demo": "rs-pomodoro-plan/",
     "live": false
   },
@@ -411,7 +423,7 @@
     "filters": [
       "rust"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-unit-counter",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-unit-counter",
     "demo": "rs-unit-counter/",
     "live": false
   },
@@ -423,7 +435,7 @@
     "filters": [
       "rust"
     ],
-    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-week-grid",
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-week-grid",
     "demo": "rs-week-grid/",
     "live": false
   },

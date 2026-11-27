@@ -14,6 +14,6 @@ cargo run -- 1572864
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-unit-counter/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-unit-counter/).
 
 Терминальная утилита, HTTP-порт не требуется.

@@ -14,6 +14,6 @@ node main.mjs 3000
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/node-dev-port/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/node-dev-port/).
 
 Проверяет локальный TCP-порт, собственный сервер не запускает.

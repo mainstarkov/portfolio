@@ -14,6 +14,6 @@ python3 main.py notes
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-markdown-index/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/py-markdown-index/).
 
 Терминальная утилита, HTTP-порт не требуется.

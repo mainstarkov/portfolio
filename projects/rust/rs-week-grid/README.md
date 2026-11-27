@@ -14,6 +14,6 @@ cargo run -- Walk Read
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-week-grid/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-week-grid/).
 
 Терминальная утилита, HTTP-порт не требуется.

@@ -2,7 +2,7 @@
 
 HTTP API с журналом последних 100 событий и защитой от повторной записи одного события.
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/go-event-inbox/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/go-event-inbox/).
 
 ## Запуск
 

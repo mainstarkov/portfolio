@@ -1,29 +1,35 @@
-# Проекты Алексея Старкова
+# Portfolio · Алексей Старков
 
 API на Go, Telegram-боты и небольшие инструменты на Go, Python, Node.js и Rust.
 
-**[Открыть сайт портфолио](https://mainstarkov.github.io/portfolio-projects/)** · [Попробовать примеры API](https://mainstarkov.github.io/portfolio-projects/#lab) · [Весь каталог](https://mainstarkov.github.io/portfolio-projects/#projects)
+**[Открыть сайт портфолио](https://mainstarkov.github.io/portfolio/)** · [Попробовать примеры API](https://mainstarkov.github.io/portfolio/#lab) · [Весь каталог](https://mainstarkov.github.io/portfolio/#projects)
 
 <picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/hedgehog.png">
   <img src="assets/hedgehog.gif" alt="mainstarkov — пиксельный ёжик на фиолетовом фоне. Go, Python, Node.js и Rust." width="960">
 </picture>
 
+## RepoMap
+
+[RepoMap](projects/go/repomap) читает папку Git и рисует переходы сайта, маршруты Go API, команды и кнопки Telegram-бота. Отчёт открывается локально в браузере.
+
+**[Посмотреть интерактивную карту](https://mainstarkov.github.io/portfolio/repomap/)**
+
 ## Бэкенд на Go
 
 | Сервис | Что делает | Локальный адрес | Демо |
 | :--- | :--- | :--- | :--- |
-| [Ссылки с TTL](projects/go/go-expiring-links) | Выдаёт короткую ссылку и перенаправляет до окончания срока | `http://127.0.0.1:8081` | [Запрос и ответ](https://mainstarkov.github.io/portfolio-projects/go-expiring-links/) |
-| [Очередь задач](projects/go/go-job-queue) | Выполняет задачи в фоновом воркере и выдаёт результат по ID | `http://127.0.0.1:8083` | [Запрос и ответ](https://mainstarkov.github.io/portfolio-projects/go-job-queue/) |
-| [Приём событий](projects/go/go-event-inbox) | Ведёт журнал событий, распознаёт повторы и конфликты | `http://127.0.0.1:8084` | [Запрос и ответ](https://mainstarkov.github.io/portfolio-projects/go-event-inbox/) |
+| [Ссылки с TTL](projects/go/go-expiring-links) | Выдаёт короткую ссылку и перенаправляет до окончания срока | `http://127.0.0.1:8081` | [Запрос и ответ](https://mainstarkov.github.io/portfolio/go-expiring-links/) |
+| [Очередь задач](projects/go/go-job-queue) | Выполняет задачи в фоновом воркере и выдаёт результат по ID | `http://127.0.0.1:8083` | [Запрос и ответ](https://mainstarkov.github.io/portfolio/go-job-queue/) |
+| [Приём событий](projects/go/go-event-inbox) | Ведёт журнал событий, распознаёт повторы и конфликты | `http://127.0.0.1:8084` | [Запрос и ответ](https://mainstarkov.github.io/portfolio/go-event-inbox/) |
 
 Для запуска сервиса перейдите в его папку и выполните `go run .` (Go 1.22+). Примеры `curl` находятся в README каждого сервиса.
 
 ## Запустить витрину локально
 
 ```sh
-git clone https://github.com/mainstarkov/portfolio-projects.git
-cd portfolio-projects
+git clone https://github.com/mainstarkov/portfolio.git
+cd portfolio
 python3 -m http.server 8000 --bind 127.0.0.1 --directory docs
 ```
 

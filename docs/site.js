@@ -48,7 +48,7 @@ fetch("projects.json").then(response => {
     projects = items;
     render();
 }).catch(() => {
-    cards.append(link("https://github.com/mainstarkov/portfolio-projects", "Открыть каталог на GitHub ↗"));
+    cards.append(link("https://github.com/mainstarkov/portfolio", "Открыть каталог на GitHub ↗"));
 });
 
 const scenarios = {

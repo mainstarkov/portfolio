@@ -2,7 +2,7 @@
 
 HTTP API с фоновой очередью. Воркер вычисляет SHA-256 и сохраняет результат для запроса статуса.
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/go-job-queue/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/go-job-queue/).
 
 ## Запуск
 

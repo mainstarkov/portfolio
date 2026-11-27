@@ -14,6 +14,6 @@ python3 main.py example.csv
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-subscription-ledger/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/py-subscription-ledger/).
 
 Терминальная утилита, HTTP-порт не требуется.

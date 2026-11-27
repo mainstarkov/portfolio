@@ -14,6 +14,6 @@ python3 main.py --demo
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-study-telegram/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/py-study-telegram/).
 
 В деморежиме запускается локально. Для Telegram-бота входящий HTTP-порт не требуется.

@@ -14,6 +14,6 @@ node main.mjs 'tag=go&tag=rust&q=hello+world'
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/node-query-card/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/node-query-card/).
 
 Терминальная утилита, HTTP-порт не требуется.

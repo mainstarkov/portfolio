@@ -14,6 +14,6 @@ python3 main.py example.srt 1500
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-srt-shift/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/py-srt-shift/).
 
 Терминальная утилита, HTTP-порт не требуется.

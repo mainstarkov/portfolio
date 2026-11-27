@@ -14,6 +14,6 @@ node main.mjs "Чай" "Кофе"
 
 ## Демо и адрес запуска
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/node-decision-bot/).
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/node-decision-bot/).
 
 Терминальная утилита, HTTP-порт не требуется.
