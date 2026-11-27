@@ -1,19 +1,38 @@
-# rs-log-count
+# Log Count
 
-Считает события INFO, WARN, ERROR и прочие уровни по первому полю каждой непустой строки.
+Считает уровни событий в текстовом журнале по первому полю каждой непустой строки.
 
-## Запуск
+[Открыть демо](https://mainstarkov.github.io/portfolio/rs-log-count/)
+
+## Возможности
+
+- Распознаёт `INFO`, `WARN` и `ERROR`.
+- Незнакомые значения считает в категории `OTHER`.
+- Пропускает пустые строки.
+
+## Скачать и запустить
+
+**Требования.** Rust и Cargo. Внешних crates нет.
+
+Скачайте [ZIP исходников](https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip) и откройте папку `portfolio-main/projects/rust/rs-log-count` **или** клонируйте репозиторий:
+
+```sh
+git clone https://github.com/mainstarkov/portfolio.git
+cd portfolio/projects/rust/rs-log-count
+```
+
+Выполните в этой папке:
 
 ```sh
 cargo run -- example.log
 ```
 
-## Как проверить
+Команды выполняются в терминале. Проект не запускает HTTP-сервер.
 
-Пример содержит два INFO и один WARN.
+## Проверить работу
 
-## Демо и адрес запуска
+В примере получится `INFO: 2` и `WARN: 1`. Подставьте путь к своему журналу с уровнем в первом поле.
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-log-count/).
+## Как устроено
 
-Терминальная утилита, HTTP-порт не требуется.
+`src/main.rs` подсчитывает уровни. `example.log` содержит тестовый журнал.

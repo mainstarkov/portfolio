@@ -1,19 +1,38 @@
-# rs-unit-counter
+# Unit Counter
 
-Переводит размер в байтах в двоичные единицы IEC.
+Переводит число байтов в двоичные единицы IEC, например KiB, MiB и GiB.
 
-## Запуск
+[Открыть демо](https://mainstarkov.github.io/portfolio/rs-unit-counter/)
+
+## Возможности
+
+- Выбирает подходящую единицу автоматически.
+- Принимает целое неотрицательное число байтов.
+- Форматирует результат до двух знаков, когда значение достигает 1 KiB.
+
+## Скачать и запустить
+
+**Требования.** Rust и Cargo. Внешних crates нет.
+
+Скачайте [ZIP исходников](https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip) и откройте папку `portfolio-main/projects/rust/rs-unit-counter` **или** клонируйте репозиторий:
+
+```sh
+git clone https://github.com/mainstarkov/portfolio.git
+cd portfolio/projects/rust/rs-unit-counter
+```
+
+Выполните в этой папке:
 
 ```sh
 cargo run -- 1572864
 ```
 
-## Как проверить
+Команды выполняются в терминале. Проект не запускает HTTP-сервер.
 
-Ожидаемый результат: `1.50 MiB`.
+## Проверить работу
 
-## Демо и адрес запуска
+Для примера результат — `1.50 MiB`.
 
-[Открыть пример в браузере](https://mainstarkov.github.io/portfolio/rs-unit-counter/).
+## Как устроено
 
-Терминальная утилита, HTTP-порт не требуется.
+`src/main.rs` выполняет пересчёт через степени 1024.
