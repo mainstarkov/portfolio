@@ -1,0 +1,11 @@
+.browser-panel{margin:22px 0 0;padding:clamp(14px,4vw,25px);background:#1a1b21;border:1px solid var(--line);border-radius:14px}
+.browser-panel h2{margin:0 0 14px;font-size:1.2rem}
+.browser-panel label{display:grid;gap:7px}
+.browser-panel input{width:100%}
+.repo-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.repo-submit{background:var(--accent);color:#23170f;font-weight:700}
+.browser-panel :disabled{opacity:.65;cursor:wait}
+.browser-panel p:last-child{margin-bottom:0;font-size:.9rem}
+#repo-status:empty{display:none}
+.handler{margin:12px 0 0;color:var(--accent);overflow-wrap:anywhere}
+.flow a{color:var(--accent)}

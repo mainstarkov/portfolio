@@ -95,19 +95,23 @@ func scan(directory string) (report, error) {
 			continue
 		}
 		out.Files++
-		source := string(data)
-		slash := filepath.ToSlash(name)
-		if ext == ".html" || ext == ".htm" {
-			out.Edges = append(out.Edges, siteEdges(slash, source)...)
-		}
-		if ext == ".go" {
-			out.Edges = append(out.Edges, goEdges(slash, data)...)
-		}
-		if ext != ".go" && telegram.MatchString(source) {
-			out.Edges = append(out.Edges, botEdges(slash, source)...)
-		}
+		out.Edges = append(out.Edges, sourceEdges(filepath.ToSlash(name), data)...)
 	}
 	return out, nil
+}
+
+func sourceEdges(file string, data []byte) []edge {
+	switch strings.ToLower(path.Ext(file)) {
+	case ".html", ".htm":
+		return siteEdges(file, string(data))
+	case ".go":
+		return goEdges(file, data)
+	case ".js", ".mjs", ".ts", ".tsx", ".py":
+		if telegram.Match(data) {
+			return botEdges(file, string(data))
+		}
+	}
+	return nil
 }
 
 func readSource(filename string) ([]byte, error) {
@@ -189,7 +193,10 @@ func goEdges(file string, source []byte) []edge {
 		return nil
 	}
 	var result []edge
-	isBot := telegram.Match(source)
+	isBot := telegram.Match(source) && !strings.HasSuffix(file, "_test.go")
+	if isBot {
+		result = append(result, goButtonEdges(file, set, tree)...)
+	}
 	ast.Inspect(tree, func(node ast.Node) bool {
 		if isBot {
 			if item, ok := goBotEdge(file, set, node); ok {
@@ -241,35 +248,6 @@ func goBotEdge(file string, set *token.FileSet, node ast.Node) (edge, bool) {
 				}
 			}
 			return edge{cmd, target, "Команда", "bot", file, set.Position(item.Pos()).Line}, true
-		}
-	case *ast.CompositeLit:
-		caption, destination := "", ""
-		for _, value := range item.Elts {
-			pair, ok := value.(*ast.KeyValueExpr)
-			if !ok {
-				continue
-			}
-			name, ok := pair.Key.(*ast.Ident)
-			if !ok {
-				continue
-			}
-			switch name.Name {
-			case "Text":
-				caption = literal(pair.Value)
-			case "Data", "CallbackData", "URL":
-				destination = literal(pair.Value)
-				if destination == "" {
-					if call, ok := pair.Value.(*ast.CallExpr); ok && len(call.Args) > 0 {
-						destination = literal(call.Args[0])
-					}
-					if destination == "" {
-						destination = "Вычисляется при запуске"
-					}
-				}
-			}
-		}
-		if caption != "" && destination != "" {
-			return edge{caption, destination, "Кнопка", "bot", file, set.Position(item.Pos()).Line}, true
 		}
 	}
 	return edge{}, false
@@ -347,11 +325,4 @@ func run(args []string) error {
 func writeReport(dst io.Writer, data []byte) error {
 	_, err := dst.Write(data)
 	return err
-}
-
-func main() {
-	if err := run(os.Args[1:]); err != nil && !errors.Is(err, flag.ErrHelp) {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
 }

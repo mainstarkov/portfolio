@@ -2,7 +2,7 @@
   {
     "name": "repomap",
     "title": "RepoMap",
-    "description": "Строит интерактивную карту из исходников Git: переходы сайта, HTTP-маршруты, команды и кнопки Telegram-бота.",
+    "description": "Строит карту прямо по ссылке на GitHub: переходы сайта, HTTP-маршруты, команды и кнопки Telegram-бота.",
     "stack": "Go / Инструменты",
     "filters": [
       "go"

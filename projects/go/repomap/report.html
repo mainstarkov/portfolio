@@ -42,20 +42,26 @@ h1{font:normal clamp(2.6rem,8vw,6rem)/1 Georgia,serif;letter-spacing:-.055em;mar
 </main>
 <script>
 const controls = [...document.querySelectorAll('button[data-kind]')];
-const flows = [...document.querySelectorAll('.flow')];
+let flows = [...document.querySelectorAll('.flow')];
 const search = document.querySelector('#search');
 let kind = 'all';
 const paths = new Map();
-for (const flow of flows.filter(item => item.dataset.kind === 'site')) {
- const [from, to] = [...flow.querySelectorAll('.node')].map(node => node.textContent);
- if (!paths.has(from)) paths.set(from, new Set());
- paths.get(from).add(to);
-}
 const start = document.querySelector('#start-page');
 const steps = document.querySelector('#steps');
 const targets = document.querySelector('#targets');
-for (const path of [...paths.keys()].sort()) start.add(new Option(path, path));
-let trail = start.value ? [start.value] : [];
+let trail = [];
+function resetPaths() {
+ paths.clear();
+ start.replaceChildren();
+ for (const flow of flows.filter(item => item.dataset.kind === 'site')) {
+  const [from, to] = [...flow.querySelectorAll('.node')].map(node => node.textContent);
+  if (!paths.has(from)) paths.set(from, new Set());
+  paths.get(from).add(to);
+ }
+ for (const path of [...paths.keys()].sort()) start.add(new Option(path, path));
+ trail = start.value ? [start.value] : [];
+ drawTrail();
+}
 function drawTrail() {
  steps.replaceChildren(...trail.map(path => {
   const step = document.createElement('li');
@@ -83,7 +89,7 @@ function drawTrail() {
  }
 }
 start.addEventListener('change', () => { trail = [start.value]; drawTrail(); });
-drawTrail();
+resetPaths();
 function update() {
  document.querySelector('#journey').hidden = kind !== 'site' || paths.size === 0;
  const term = search.value.trim().toLowerCase();
@@ -101,6 +107,12 @@ for (const button of controls) button.addEventListener('click', () => {
  update();
 });
 search.addEventListener('input', update);
+document.addEventListener('repomap:changed', () => {
+ flows = [...document.querySelectorAll('.flow')];
+ search.value = '';
+ resetPaths();
+ update();
+});
 update();
 </script>
 </html>
