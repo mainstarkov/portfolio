@@ -10,11 +10,12 @@ git -C "$tmp/Лавка · сайт и бот" init -q
 go run . -out "$tmp/index.html" "$tmp/Лавка · сайт и бот"
 mkdir -p "$out"
 sed '/<title>/a\
-<link rel="stylesheet" href="browser.css">\
+<link rel="stylesheet" href="browser.css?v=tree-1">\
 <script src="wasm_exec.js" defer></script>\
-<script src="browser.js" defer></script>
+<script src="graph.js?v=tree-1" defer></script>\
+<script src="browser.js?v=tree-1" defer></script>
 ' "$tmp/index.html" > "$out/index.html"
-cp web/browser.js web/browser.css "$out/"
+cp web/browser.js web/graph.js web/browser.css "$out/"
 goroot="$(go env GOROOT)"
 source="$goroot/lib/wasm/wasm_exec.js"
 if [ ! -f "$source" ]; then source="$goroot/misc/wasm/wasm_exec.js"; fi

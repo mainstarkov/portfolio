@@ -9,8 +9,12 @@ import (
 
 func main() {
 	analyze := js.FuncOf(func(this js.Value, args []js.Value) any {
-		edges := sourceEdges(args[0].String(), []byte(args[1].String()))
-		output, _ := json.Marshal(edges)
+		file, data := args[0].String(), []byte(args[1].String())
+		result := struct {
+			Edges []edge
+			Flows []controlFlow
+		}{sourceEdges(file, data), controlFlows(file, data)}
+		output, _ := json.Marshal(result)
 		return string(output)
 	})
 	defer analyze.Release()

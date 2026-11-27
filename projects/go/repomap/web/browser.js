@@ -19,6 +19,7 @@ const repoForm = browserPanel.querySelector("form");
 const repoInput = browserPanel.querySelector("input");
 const status = browserPanel.querySelector("#repo-status");
 let engine;
+const showGraph = createRepoGraph();
 
 function parseRepository(input) {
  const url = new URL(input.trim());
@@ -45,7 +46,7 @@ async function startEngine() {
  if (engine) return engine;
  engine = (async () => {
   const runtime = new Go();
-  const response = await fetch("repomap.wasm");
+  const response = await fetch("repomap.wasm?v=tree-1");
   if (!response.ok) throw new Error("Не удалось загрузить анализатор RepoMap.");
   const { instance } = await WebAssembly.instantiate(await response.arrayBuffer(), runtime.importObject);
   void runtime.run(instance);
@@ -108,11 +109,12 @@ function sourceLink(repo, sha, edge, label) {
  link.href = `https://github.com/${repo}/blob/${sha}/${edge.File.split("/").map(encodeURIComponent).join("/")}#L${edge.Line}`;
  return link;
 }
-function renderMap(repo, sha, edges, files) {
+function renderMap(repo, sha, edges, flows, files) {
  const callbacks = new Map();
  for (const edge of edges) {
   if (edge.Label === "Callback" && !callbacks.has(edge.From)) callbacks.set(edge.From, edge);
  }
+ showGraph(repo, sha, edges, flows, callbacks);
  const items = edges.map(edge => {
   const item = el("article", "", "flow");
   item.dataset.kind = edge.Kind;
@@ -151,14 +153,14 @@ async function buildRepository(input) {
  const repo = parseRepository(input);
  status.textContent = "Читаю дерево GitHub и загружаю анализатор…";
  const [tree, analyze] = await Promise.all([listSources(repo), startEngine()]);
- const results = Array.from({ length: tree.files.length }, () => []);
+ const results = Array.from({ length: tree.files.length }, () => ({}));
  let cursor = 0, loaded = 0, failed = 0;
  await Promise.all(Array.from({ length: Math.min(6, tree.files.length) }, async () => {
   while (cursor < tree.files.length) {
    const index = cursor++;
    const file = tree.files[index];
    try {
-    results[index] = JSON.parse(analyze(file.path, await sourceText(repo, tree, file))) || [];
+    results[index] = JSON.parse(analyze(file.path, await sourceText(repo, tree, file)));
     loaded++;
    } catch {
     failed++;
@@ -168,13 +170,14 @@ async function buildRepository(input) {
  }));
  if (failed && !loaded) throw new Error("Не удалось загрузить исходники. Проверьте подключение к GitHub.");
  const unique = new Set();
- const edges = results.flat().filter(edge => {
+ const edges = results.flatMap(item => item.Edges || []).filter(edge => {
   const key = JSON.stringify([edge.Kind, edge.Label, edge.From, edge.To]);
   if (unique.has(key)) return false;
   unique.add(key);
   return true;
  });
- renderMap(repo, tree.ref, edges, loaded);
+ const flows = results.flatMap(item => item.Flows || []);
+ renderMap(repo, tree.ref, edges, flows, loaded);
  status.textContent = (tree.cached ? "Готово · снимок HEAD из кэша jsDelivr. Ссылки ведут в текущую основную ветку." : `Готово · ревизия ${tree.ref.slice(0, 8)}.`)
   + (tree.partial ? ` Часть файлов пропущена из-за ограничений размера или количества (кандидатов: ${tree.total}).` : "")
   + (failed ? ` Не удалось прочитать файлов: ${failed}.` : "");

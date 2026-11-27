@@ -1,0 +1,196 @@
+"use strict";
+
+function createRepoGraph() {
+ const section = document.createElement("section");
+ section.className = "diagram";
+ section.hidden = true;
+ section.innerHTML = `<header class="diagram-head">
+  <div><h2>Схема проекта</h2><p id="diagram-summary"></p></div>
+  <div class="diagram-tools">
+   <button type="button" data-diagram="overview" aria-pressed="true">Связи</button>
+   <button type="button" data-diagram="conditions" aria-pressed="false">Условия</button>
+   <button type="button" id="diagram-full">На весь экран</button>
+   <label>Масштаб <select id="diagram-zoom"><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option></select></label>
+  </div></header>
+  <label id="diagram-handler-label" hidden>Функция <select id="diagram-handler"></select></label>
+  <div class="diagram-scroll" tabindex="0" aria-label="Прокручиваемая схема">
+   <div id="diagram-content"></div>
+  </div>`;
+ document.querySelector(".toolbar").before(section);
+ const content = section.querySelector("#diagram-content");
+ const handler = section.querySelector("#diagram-handler");
+ const handlerLabel = section.querySelector("#diagram-handler-label");
+ const modes = [...section.querySelectorAll("[data-diagram]")];
+ const fullscreen = section.querySelector("#diagram-full");
+ fullscreen.hidden = !document.fullscreenEnabled;
+ fullscreen.addEventListener("click", async () => {
+  try {
+   if (document.fullscreenElement === section) await document.exitFullscreen();
+   else await section.requestFullscreen();
+  } catch {
+   fullscreen.hidden = true;
+  }
+ });
+ document.addEventListener("fullscreenchange", () => {
+  fullscreen.textContent = document.fullscreenElement === section ? "Выйти из полноэкранного режима" : "На весь экран";
+ });
+ let data, mode = "overview";
+
+ function node(text, type, children = [], link = null, action = null) {
+  const item = el("li", "", "diagram-node");
+  const card = el("div", "", "diagram-card");
+  card.dataset.type = type;
+  card.append(el("span", text, "diagram-text"));
+  if (link) card.append(link);
+  if (action) {
+   const button = el("button", "Условия ↗");
+   button.type = "button";
+   button.addEventListener("click", action);
+   card.append(button);
+  }
+  item.append(card);
+  if (children.length) {
+   const list = el("ul", "", "diagram-children");
+   list.append(...children);
+   item.append(list);
+  }
+  return item;
+ }
+ function source(edge, label = `↗ ${edge.File}:${edge.Line}`) {
+  const link = sourceLink(data.repo, data.ref, edge, label);
+  link.className = "diagram-source";
+  link.target = "_blank";
+  link.rel = "noopener";
+  return link;
+ }
+ function callbackTree(edge) {
+  const match = data.callbacks.get(edge.To.split(":")[0]);
+  if (!match) return node(edge.To, "value");
+  const functionIndex = data.flows.findIndex(flow =>
+   flow.File === match.File && flow.Line <= match.Line && flow.End >= match.Line);
+  return node(edge.To, "value", [
+   node(match.To, "action", [], source(match), functionIndex < 0 ? null : () => showConditions(functionIndex, match.Line))
+  ]);
+ }
+ function group(label, children) {
+  return children.length ? [node(label, "group", children)] : [];
+ }
+ function websiteTree(links) {
+  const byPage = new Map();
+  for (const edge of links) {
+   if (!byPage.has(edge.From)) byPage.set(edge.From, []);
+   byPage.get(edge.From).push(edge);
+  }
+  const reached = new Set();
+  let remaining = 160;
+  function walk(page, incoming, ancestors) {
+   remaining--;
+   if (ancestors.has(page)) return node(`${page} · повтор`, "value", [], source(incoming));
+   if (reached.has(page)) return node(`${page} · ветка выше`, "value", [], source(incoming));
+   reached.add(page);
+   const children = [];
+   const nextAncestors = new Set([...ancestors, page]);
+   for (const edge of byPage.get(page) || []) {
+    if (remaining <= 0 || ancestors.size >= 12) {
+     children.push(node("Остальные переходы см. в списке связей", "value"));
+     break;
+    }
+    children.push(walk(edge.To, edge, nextAncestors));
+   }
+   return node(page, "value", children, incoming ? source(incoming) : null);
+  }
+  const targets = new Set(links.map(edge => edge.To));
+  const pages = [...byPage.keys()].sort((a,b) => Number(targets.has(a)) - Number(targets.has(b)) || a.localeCompare(b));
+  const roots = [];
+  for (const page of pages) {
+   if (remaining <= 0) break;
+   if (!reached.has(page)) roots.push(walk(page,null,new Set()));
+  }
+  return roots;
+ }
+ function overview() {
+  const {edges} = data;
+  const bot = edges.filter(edge => edge.Kind === "bot");
+  const commands = bot.filter(edge => edge.Label === "Команда");
+  const buttons = bot.filter(edge => ["Кнопка","Ссылка Telegram"].includes(edge.Label));
+  const api = edges.filter(edge => edge.Kind === "api");
+  const site = edges.filter(edge => edge.Kind === "site");
+  const cap = (items, convert) => [
+   ...items.slice(0,120).map(convert),
+   ...(items.length > 120 ? [node(`Ещё ${items.length - 120} в списке связей`, "value")] : [])
+  ];
+  return [
+   ...group("Telegram", [
+    ...group("Команды", cap(commands, edge => {
+     const detected = data.flows.flatMap((flow,index) => flow.File === edge.File && flow.Name === edge.To ? [index] : []);
+     const action = detected.length ? () => showConditions(detected[0]) : null;
+     return edge.From === "Telegram" ? node(edge.To, "value", [], source(edge))
+      : node(edge.From, "value", [node(edge.To, "action", [], source(edge), action)]);
+    })),
+    ...group("Кнопки", cap(buttons, edge => node(edge.From,"value",[callbackTree(edge)],source(edge)))),
+    ...group("Другие callback", cap(bot.filter(edge => edge.Label === "Callback" &&
+     !buttons.some(button => button.To.split(":")[0] === edge.From)),
+     edge => node(edge.From,"value",[node(edge.To,"action",[],source(edge))]))),
+   ]),
+   ...group("HTTP API", cap(api, edge => node(edge.From,"value",[node(edge.To,"action",[],source(edge))]))),
+   ...group("Страницы", websiteTree(site)),
+  ];
+ }
+ function conditionTree(flow, steps) {
+  return (steps || []).map(step => {
+   const children = (step.Branches || []).map(branch => {
+    const item = node(branch.Label,"branch",
+     branch.Steps?.length ? conditionTree(flow,branch.Steps) : [node("К следующему шагу","value")],
+     branch.Line ? source({File:flow.File,Line:branch.Line},`↗ строка ${branch.Line}`) : null);
+    if (branch.Line) item.dataset.line = branch.Line;
+    return item;
+   });
+   const item = node(step.Text,step.Kind,children,source({File:flow.File,Line:step.Line},`↗ строка ${step.Line}`));
+   item.dataset.line = step.Line;
+   return item;
+  });
+ }
+ function showConditions(index, line) {
+  handler.value = String(index);
+  mode = "conditions";
+  paint();
+  handler.focus({preventScroll:true});
+  if (line) {
+   const target = content.querySelector(`[data-line="${line}"] > .diagram-card`);
+   if (target) {
+    target.classList.add("diagram-highlight");
+    target.scrollIntoView({block:"center",inline:"nearest"});
+   }
+  }
+ }
+ function paint() {
+  if (!data) return;
+  const flow = data.flows[Number(handler.value)];
+  const conditions = mode === "conditions";
+  for (const button of modes) button.setAttribute("aria-pressed", String(mode === button.dataset.diagram));
+  handlerLabel.hidden = !conditions || !flow;
+  const tree = el("ul", "", "diagram-tree");
+  if (conditions && flow) {
+   tree.append(node(flow.Name,"root",conditionTree(flow,flow.Steps),source(flow)));
+  } else if (!conditions) {
+   const groups = overview();
+   if (groups.length) tree.append(node(data.repo,"root",groups));
+  }
+  content.replaceChildren(tree.childElementCount ? tree : el("p", conditions ? "В поддерживаемых исходниках условия не найдены." : "Связей для схемы не найдено."));
+  section.querySelector("#diagram-summary").textContent = conditions && flow
+   ? `${flow.File}:${flow.Line} · сверху вниз в порядке исходника${flow.Limited ? " · показаны первые 180 элементов" : ""}`
+   : "Общая карта команд, кнопок, маршрутов и переходов.";
+ }
+ modes.forEach(button => button.addEventListener("click", () => { mode = button.dataset.diagram; paint(); }));
+ handler.addEventListener("change", paint);
+ section.querySelector("#diagram-zoom").addEventListener("change", event => { content.style.zoom = event.target.value; });
+ return (repo, ref, edges, flows, callbacks) => {
+  const priority = flow => /callback|handle|dispatch|route|message|process/i.test(flow.Name) ? 0 : 1;
+  flows.sort((a,b) => priority(a) - priority(b) || Number(!/callback/i.test(a.Name)) - Number(!/callback/i.test(b.Name)) || a.File.localeCompare(b.File) || a.Line - b.Line);
+  data = {repo, ref, edges, flows, callbacks};
+  handler.replaceChildren(...flows.map((flow,index) => new Option(`${flow.Name} · ${flow.File}:${flow.Line}`, String(index))));
+  mode = "overview";
+  section.hidden = false;
+  paint();
+ };
+}
