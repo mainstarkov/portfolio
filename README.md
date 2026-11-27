@@ -5,8 +5,8 @@ API на Go, Telegram-боты и небольшие инструменты на
 **[Открыть сайт портфолио](https://mainstarkov.github.io/portfolio/)** · [Попробовать примеры API](https://mainstarkov.github.io/portfolio/#lab) · [Весь каталог](https://mainstarkov.github.io/portfolio/#projects)
 
 <picture>
-  <source media="(prefers-reduced-motion: reduce)" srcset="assets/hedgehog.png">
-  <img src="assets/hedgehog.gif" alt="mainstarkov — пиксельный ёжик на фиолетовом фоне. Go, Python, Node.js и Rust." width="960">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/hedgehog-mushroom-trail.png">
+  <img src="assets/hedgehog-mushroom-trail.gif" alt="mainstarkov — пиксельный ёжик идёт по ночному лесу и собирает грибы в корзинку. Go, Python, Node.js и Rust." width="960">
 </picture>
 
 ## RepoMap
