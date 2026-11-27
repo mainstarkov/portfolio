@@ -3,23 +3,66 @@
 function createRepoGraph() {
  const section = document.createElement("section");
  section.className = "diagram";
+ section.id = "repo-diagram";
  section.hidden = true;
  section.innerHTML = `<header class="diagram-head">
   <div><h2>Схема проекта</h2><p id="diagram-summary"></p></div>
   <div class="diagram-tools">
+   <div class="diagram-modes" aria-label="Режим схемы">
    <button type="button" data-diagram="overview" aria-pressed="true">Связи</button>
-   <button type="button" data-diagram="conditions" aria-pressed="false">Условия</button>
+   <button type="button" data-diagram="conditions" aria-pressed="false">Условия</button></div>
+   <label class="diagram-zoom">Масштаб <select id="diagram-zoom"><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option></select></label>
    <button type="button" id="diagram-full">На весь экран</button>
-   <label>Масштаб <select id="diagram-zoom"><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option></select></label>
   </div></header>
-  <label id="diagram-handler-label" hidden>Функция <select id="diagram-handler"></select></label>
+  <div class="diagram-navigation">
+   <label id="diagram-jump-label" hidden>Перейти к разделу <select id="diagram-jump"><option value="">Выбрать раздел</option></select></label>
+   <label id="diagram-handler-label" hidden>Функция <select id="diagram-handler"></select></label>
+   <button type="button" id="diagram-top">↑ К началу схемы</button>
+  </div>
   <div class="diagram-scroll" tabindex="0" aria-label="Прокручиваемая схема">
    <div id="diagram-content"></div>
   </div>`;
- document.querySelector(".toolbar").before(section);
+ const toolbar = document.querySelector(".toolbar");
+ toolbar.before(section);
+ toolbar.id = "repo-connections";
+ const menu = document.createElement("nav");
+ menu.className = "repo-navigation";
+ menu.setAttribute("aria-label", "Навигация по RepoMap");
+ menu.hidden = true;
+ menu.innerHTML = '<a href="#repo-form">Репозиторий</a><a href="#repo-diagram">Схема</a><a href="#repo-connections">Список связей</a>';
+ section.before(menu);
+ const menuLinks = [...menu.querySelectorAll("a")];
+ function markLocation() {
+  for (const link of menuLinks) {
+   if (link.hash === location.hash) link.setAttribute("aria-current", "location");
+   else link.removeAttribute("aria-current");
+  }
+ }
+ window.addEventListener("hashchange", markLocation);
+ markLocation();
+ const list = document.querySelector("#map");
+ list.classList.add("repo-connection-scroll");
+ list.tabIndex = 0;
+ const viewport = section.querySelector(".diagram-scroll");
+ keepScrollInside(viewport);
+ keepScrollInside(list);
  const content = section.querySelector("#diagram-content");
  const handler = section.querySelector("#diagram-handler");
  const handlerLabel = section.querySelector("#diagram-handler-label");
+ const jump = section.querySelector("#diagram-jump");
+ const jumpLabel = section.querySelector("#diagram-jump-label");
+ const toTop = () => viewport.scrollTo({top:0,left:0});
+ section.querySelector("#diagram-top").addEventListener("click", toTop);
+ jump.addEventListener("change", () => {
+  if (!jump.value) return;
+  const group = content.querySelector(`[data-group-index="${jump.value}"]`);
+  if (group) showInViewport(group, false);
+  jump.value = "";
+ });
+ function showInViewport(element, center) {
+  const top = viewport.scrollTop + element.getBoundingClientRect().top - viewport.getBoundingClientRect().top;
+  viewport.scrollTo({top:top - (center ? viewport.clientHeight / 3 : 12),left:0});
+ }
  const modes = [...section.querySelectorAll("[data-diagram]")];
  const fullscreen = section.querySelector("#diagram-full");
  fullscreen.hidden = !document.fullscreenEnabled;
@@ -241,7 +284,7 @@ function createRepoGraph() {
    const target = content.querySelector(`[data-line="${line}"] > .diagram-card`);
    if (target) {
     target.classList.add("diagram-highlight");
-    target.scrollIntoView({block:"center",inline:"nearest"});
+    showInViewport(target, true);
    }
   }
  }
@@ -259,6 +302,13 @@ function createRepoGraph() {
    if (groups.length) tree.append(node(data.repo,"root",groups));
   }
   content.replaceChildren(tree.childElementCount ? tree : el("p", conditions ? "В поддерживаемых исходниках условия не найдены." : "Связей для схемы не найдено."));
+  const groups = conditions ? [] : [...tree.querySelectorAll('.diagram-card[data-type="group"]')];
+  jump.replaceChildren(new Option("Выбрать раздел", ""), ...groups.map((group,index) => {
+   group.dataset.groupIndex = String(index);
+   return new Option(group.querySelector(".diagram-text").textContent, String(index));
+  }));
+  jumpLabel.hidden = groups.length === 0;
+  toTop();
   section.querySelector("#diagram-summary").textContent = conditions && flow
    ? `${flow.File}:${flow.Line} · сверху вниз в порядке исходника${flow.Limited ? " · показаны первые 180 элементов" : ""}`
    : "Нажмите на кнопку бота, чтобы раскрыть её условия прямо в дереве.";
@@ -273,6 +323,36 @@ function createRepoGraph() {
   handler.replaceChildren(...flows.map((flow,index) => new Option(`${flow.Name} · ${flow.File}:${flow.Line}`, String(index))));
   mode = "overview";
   section.hidden = false;
+  menu.hidden = false;
+  list.scrollTop = 0;
   paint();
  };
+}
+
+function keepScrollInside(panel) {
+ function canScroll(delta, position, maximum) {
+  return maximum > 1 && (delta < 0 ? position > 1 : delta > 0 && position < maximum - 1);
+ }
+ function atEdge(x, y) {
+  return !(canScroll(y, panel.scrollTop, panel.scrollHeight - panel.clientHeight) ||
+   canScroll(x, panel.scrollLeft, panel.scrollWidth - panel.clientWidth));
+ }
+ panel.addEventListener("wheel", event => {
+  if (!event.ctrlKey && !event.metaKey && event.cancelable &&
+      atEdge(event.shiftKey ? event.deltaX || event.deltaY : event.deltaX, event.shiftKey ? 0 : event.deltaY)) {
+   event.preventDefault();
+  }
+ }, {passive:false});
+ let touch;
+ panel.addEventListener("touchstart", event => {
+  touch = event.touches.length === 1 ? event.touches[0] : null;
+ }, {passive:true});
+ panel.addEventListener("touchmove", event => {
+  if (!touch || event.touches.length !== 1) return;
+  const point = event.touches[0];
+  const x = touch.clientX - point.clientX;
+  const y = touch.clientY - point.clientY;
+  if (event.cancelable && (x || y) && atEdge(x, y)) event.preventDefault();
+  touch = point;
+ }, {passive:false});
 }
