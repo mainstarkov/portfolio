@@ -4,8 +4,8 @@ browserPanel.className = "browser-panel";
 browserPanel.innerHTML = `
  <h2>Построить карту GitHub-репозитория</h2>
  <form id="repo-form">
-  <label>Ссылка на публичный репозиторий <input id="repo-url" type="url" placeholder="https://github.com/owner/repo" required></label>
-  <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><button id="spy-example" type="button">Попробовать Spy Bot</button></div>
+  <label>Ссылка на публичный репозиторий <input id="repo-url" type="url" placeholder="https://github.com/vasypypkin/exemple" required></label>
+  <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><a class="repo-example" href="./">Готовый пример</a></div>
  </form>
  <p id="repo-status" role="status"></p>
  <p>Анализ идёт в браузере по исходникам из основной ветки. Для закрытых репозиториев используйте локальную версию.</p>`;
@@ -190,9 +190,7 @@ async function buildRepository(input) {
   + (failed ? ` Не удалось прочитать файлов: ${failed}.` : "");
 }
 
-repoForm.addEventListener("submit", async event => {
- event.preventDefault();
- const input = repoInput.value;
+async function runAnalysis(input) {
  for (const control of repoForm.elements) control.disabled = true;
  try {
   await buildRepository(input);
@@ -201,10 +199,11 @@ repoForm.addEventListener("submit", async event => {
  } finally {
   for (const control of repoForm.elements) control.disabled = false;
  }
-});
-function loadSpyExample() {
- repoInput.value = "https://github.com/mainstarkov/spy-bot";
- repoForm.requestSubmit();
 }
-browserPanel.querySelector("#spy-example").addEventListener("click", loadSpyExample);
-if (new URLSearchParams(location.search).get("demo") === "spy") loadSpyExample();
+repoForm.addEventListener("submit", event => {
+ event.preventDefault();
+ void runAnalysis(repoInput.value);
+});
+if (new URLSearchParams(location.search).get("demo") === "spy") {
+ void runAnalysis("https://github.com/mainstarkov/spy-bot");
+}
