@@ -63,9 +63,16 @@ function createRepoGraph() {
   link.rel = "noopener";
   return link;
  }
+ function sequence(steps, continuation) {
+  let next = continuation;
+  return [...(steps || [])].reverse().map(step => {
+   const cursor = {step, next};
+   next = cursor;
+   return cursor;
+  }).reverse();
+ }
  function callbackSteps(steps, target, continuation = null) {
-  for (const [index, step] of (steps || []).entries()) {
-   const next = steps[index + 1] || continuation;
+  for (const {step, next} of sequence(steps, continuation)) {
    if (step.Line === target) return {steps:[step], next};
    for (const branch of step.Branches || []) {
     if (branch.Line === target) {
@@ -106,25 +113,28 @@ function createRepoGraph() {
    node(match.To, "action", children, source(match))
   ]);
  }
- function expandableButton(edge) {
-  const item = node(edge.From, "button", [], source(edge));
+ function expandableNode(text, type, link, render) {
+  const item = node(text, type, [], link);
   const card = item.firstElementChild;
-  const disclosure = el("button", edge.From, "diagram-toggle");
+  const disclosure = el("button", text, "diagram-toggle");
   disclosure.type = "button";
   disclosure.setAttribute("aria-expanded", "false");
   card.firstElementChild.replaceWith(disclosure);
-  const children = el("ul", "", "diagram-children diagram-button-steps");
-  children.id = `diagram-button-steps-${++buttonID}`;
+  const children = el("ul", "", "diagram-children");
+  children.id = `diagram-steps-${++buttonID}`;
   children.hidden = true;
   disclosure.setAttribute("aria-controls", children.id);
   item.append(children);
   disclosure.addEventListener("click", () => {
    const opening = children.hidden;
-   if (opening && !children.firstChild) children.append(callbackTree(edge));
+   if (opening && !children.firstChild) children.append(...render());
    children.hidden = !opening;
    disclosure.setAttribute("aria-expanded", String(opening));
   });
   return item;
+ }
+ function expandableButton(edge) {
+  return expandableNode(edge.From, "button", source(edge), () => [callbackTree(edge)]);
  }
  function group(label, children) {
   return children.length ? [node(label, "group", children)] : [];
@@ -194,26 +204,33 @@ function createRepoGraph() {
   return (steps || []).some(step => step.Kind === "exit" ||
    (step.Kind === "condition" && step.Branches.every(branch => exits(branch.Steps))));
  }
- function conditionTree(flow, steps, continuation = null) {
-  const locator = line => source({File:flow.File,Line:line}, `↗ строка ${line}`);
-  return (steps || []).map((step, index) => {
-   const next = steps[index + 1] || continuation;
-   const children = (step.Branches || []).map(branch => {
-    const branchNext = branch.Next === undefined ? next : branch.Next;
-    const branchSteps = conditionTree(flow, branch.Steps, branchNext);
-    if (!exits(branch.Steps)) {
-     branchSteps.push(branchNext
-      ? node(`Дальше: ${branchNext.Text}`, "next", [], locator(branchNext.Line))
-      : node("Конец показанной ветки", "value"));
-    }
-    const item = node(branch.Label,"branch",branchSteps,branch.Line ? locator(branch.Line) : null);
-    if (branch.Line) item.dataset.line = branch.Line;
-    return item;
-   });
-   const item = node(step.Text,step.Kind,children,locator(step.Line));
-   item.dataset.line = step.Line;
+ function flowSource(flow, line) {
+  return source({File:flow.File,Line:line}, `↗ строка ${line}`);
+ }
+ function nextStep(flow, cursor) {
+  if (!cursor) return node("Конец показанной ветки", "value");
+  const {step, next} = cursor;
+  return expandableNode(`Дальше: ${step.Text}`, "next", flowSource(flow, step.Line), () => {
+   const items = [conditionNode(flow, cursor)];
+   if (step.Kind !== "exit" && !step.Branches?.length) items.push(nextStep(flow, next));
+   return items;
+  });
+ }
+ function conditionNode(flow, {step, next}) {
+  const children = (step.Branches || []).map(branch => {
+   const branchNext = branch.Next === undefined ? next : branch.Next;
+   const branchSteps = conditionTree(flow, branch.Steps, branchNext);
+   if (!exits(branch.Steps)) branchSteps.push(nextStep(flow, branchNext));
+   const item = node(branch.Label,"branch",branchSteps,branch.Line ? flowSource(flow, branch.Line) : null);
+   if (branch.Line) item.dataset.line = branch.Line;
    return item;
   });
+  const item = node(step.Text,step.Kind,children,flowSource(flow, step.Line));
+  item.dataset.line = step.Line;
+  return item;
+ }
+ function conditionTree(flow, steps, continuation = null) {
+  return sequence(steps, continuation).map(cursor => conditionNode(flow, cursor));
  }
  function showConditions(index, line) {
   handler.value = String(index);

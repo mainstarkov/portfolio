@@ -10,9 +10,9 @@ git -C "$tmp/Лавка · сайт и бот" init -q
 go run . -out "$tmp/index.html" "$tmp/Лавка · сайт и бот"
 mkdir -p "$out"
 sed '/<title>/a\
-<link rel="stylesheet" href="browser.css?v=tree-2">\
+<link rel="stylesheet" href="browser.css?v=tree-3">\
 <script src="wasm_exec.js" defer></script>\
-<script src="graph.js?v=tree-2" defer></script>\
+<script src="graph.js?v=tree-3" defer></script>\
 <script src="browser.js?v=tree-1" defer></script>
 ' "$tmp/index.html" > "$out/index.html"
 cp web/browser.js web/graph.js web/browser.css "$out/"

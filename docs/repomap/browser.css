@@ -26,3 +26,5 @@
 .diagram:fullscreen{margin:0;width:100%;height:100%;display:flex;flex-direction:column;border-radius:0}.diagram:fullscreen .diagram-scroll{flex:1;max-height:none}.diagram-highlight{outline:2px solid var(--accent);outline-offset:2px}
 
 .diagram-card[data-type=button]{background:#30251e;border-color:#93674b}.diagram-card .diagram-toggle{border:0;padding:0;color:var(--accent);background:transparent;text-align:left;overflow-wrap:anywhere}.diagram-toggle::before{content:"";display:inline-block;margin-right:6px;border-block:4px solid transparent;border-left:6px solid var(--accent)}.diagram-toggle[aria-expanded=true]::before{transform:rotate(90deg)}.diagram-card[data-type=next]{border-style:dashed;color:var(--muted)}
+
+.diagram-card[data-type=next] .diagram-toggle{font-family:ui-monospace,monospace;font-size:.8rem;text-decoration:underline;text-underline-offset:3px}.diagram-card[data-type=next]:has(.diagram-toggle[aria-expanded=true]){border-color:var(--accent)}
