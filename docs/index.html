@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Портфолио mainstarkov. Бэкенд на Go, Telegram-боты, инструменты и веб-демо.">
+<title>Проекты mainstarkov · Go, API и боты</title>
+<link rel="icon" href="hedgehog.jpg">
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<a href="#main" class="skip">К содержимому</a>
+<header class="masthead shell">
+<a class="brand" href="./"><img src="hedgehog.jpg" alt="" width="40" height="40"><span>mainstarkov<small>Портфолио</small></span></a>
+<nav aria-label="Разделы"><a href="#projects">Проекты</a><a href="#lab">API-демо</a></nav>
+<a class="source" href="https://github.com/mainstarkov/portfolio-projects">GitHub ↗</a>
+</header>
+<main id="main" class="shell">
+<section class="hero">
+<div>
+<p class="overline">GO / PYTHON / NODE.JS / RUST</p>
+<h1>От команды<br>до <em>сервиса.</em></h1>
+<p class="intro">Алексей Старков. Собираю API, Telegram-ботов и инструменты для терминала. Здесь можно посмотреть, как они работают, и запустить их у себя.</p>
+<div class="actions"><a class="button" href="#projects">Смотреть проекты ↓</a><a class="quiet" href="#lab">Попробовать API</a></div>
+</div>
+<aside class="terminal" aria-label="Пример запроса">
+<div class="term-head"><span aria-hidden="true">● ● ●</span><samp>go-job-queue</samp><span class="env">localhost</span></div>
+<div class="term-body"><p class="muted">$ POST /jobs</p><p>{ "text": "hello" }</p><p class="return">↳ 202 Accepted</p><p>{ "id": 1, "status": "queued" }</p><hr><p class="muted">$ GET /jobs/1</p><p class="return">↳ 200 OK</p><p>{ "id": 1, "status": "done" }</p></div>
+</aside>
+</section>
+<section id="projects" class="section">
+<div class="section-top"><div><p class="overline">КАТАЛОГ</p><h2>Проекты</h2></div><p id="count" class="muted" aria-live="polite"></p></div>
+<div class="toolbar">
+<div id="filters" class="filters" aria-label="Фильтр по стеку">
+<button type="button" aria-pressed="true" data-filter="all">Все</button>
+<button type="button" aria-pressed="false" data-filter="backend">Бэкенд</button>
+<button type="button" aria-pressed="false" data-filter="go">Go</button>
+<button type="button" aria-pressed="false" data-filter="python">Python</button>
+<button type="button" aria-pressed="false" data-filter="node">Node.js</button>
+<button type="button" aria-pressed="false" data-filter="rust">Rust</button>
+</div>
+<label class="search">Поиск <input id="query" type="search" placeholder="Например, Telegram"></label>
+</div>
+<div id="cards" class="cards"></div>
+<p id="empty" hidden>Ничего не найдено. Попробуй другой запрос.</p>
+<noscript><a href="https://github.com/mainstarkov/portfolio-projects#каталог-мини-проектов">Открыть список проектов и инструкции на GitHub</a></noscript>
+</section>
+<section id="lab" class="section">
+<p class="overline">GO / HTTP</p><h2>Попробовать API</h2>
+<p class="intro">Примеры запросов и ответов для трёх Go-сервисов. На этой странице ответы демонстрационные. Реальный сервер можно запустить по инструкции проекта.</p>
+<div class="lab">
+<label>Сценарий <select id="scenario"><option value="links">Создать временную ссылку</option><option value="job">Проверить задачу в очереди</option><option value="event">Повторно отправить событие</option></select></label>
+<pre><code id="command"></code></pre>
+<div class="actions"><button type="button" id="execute" class="button">Показать ответ</button><button type="button" id="copy" class="quiet">Копировать curl</button><a id="lab-doc" href="go-expiring-links/">Инструкция ↗</a></div>
+<p id="copy-status" role="status"></p>
+<pre id="result" aria-live="polite" hidden></pre>
+</div>
+</section>
+</main>
+<footer class="shell"><span>Алексей Старков</span><a href="https://github.com/mainstarkov">Профиль GitHub ↗</a><a href="#main">Наверх ↑</a></footer>
+</body></html>

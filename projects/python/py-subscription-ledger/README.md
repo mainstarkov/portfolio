@@ -11,3 +11,9 @@ python3 main.py example.csv
 ## Как проверить
 
 Пример должен показать годовой итог 180.00. Используйте одну валюту на файл.
+
+## Демо и адрес запуска
+
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-subscription-ledger/).
+
+Терминальная утилита, HTTP-порт не требуется.

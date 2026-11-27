@@ -11,3 +11,9 @@ node main.mjs 'tag=go&tag=rust&q=hello+world'
 ## Как проверить
 
 Поле `tag` содержит два значения, поле `q` — строку с пробелом.
+
+## Демо и адрес запуска
+
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/node-query-card/).
+
+Терминальная утилита, HTTP-порт не требуется.

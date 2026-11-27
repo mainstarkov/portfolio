@@ -11,3 +11,9 @@ python3 main.py example.srt 1500
 ## Как проверить
 
 Первый субтитр начнётся в `00:00:02,500`.
+
+## Демо и адрес запуска
+
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-srt-shift/).
+
+Терминальная утилита, HTTP-порт не требуется.

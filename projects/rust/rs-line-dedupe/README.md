@@ -11,3 +11,9 @@ cargo run -- example.txt
 ## Как проверить
 
 Результат содержит две строки: `pear` и `apple`.
+
+## Демо и адрес запуска
+
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/rs-line-dedupe/).
+
+Терминальная утилита, HTTP-порт не требуется.

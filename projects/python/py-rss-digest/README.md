@@ -11,3 +11,9 @@ python3 main.py example.xml --limit 5
 ## Как проверить
 
 Пример выдаёт заголовок `First release` и ссылку.
+
+## Демо и адрес запуска
+
+[Открыть пример в браузере](https://mainstarkov.github.io/portfolio-projects/py-rss-digest/).
+
+Терминальная утилита, HTTP-порт не требуется.

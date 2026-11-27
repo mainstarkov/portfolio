@@ -1,0 +1,526 @@
+[
+  {
+    "name": "go-expiring-links",
+    "title": "Ссылки с TTL",
+    "description": "HTTP API для временных ссылок и перенаправлений.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-expiring-links",
+    "demo": "go-expiring-links/",
+    "live": false
+  },
+  {
+    "name": "go-job-queue",
+    "title": "Очередь задач",
+    "description": "Принимает задания по HTTP и считает SHA-256 в фоновом воркере.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-job-queue",
+    "demo": "go-job-queue/",
+    "live": false
+  },
+  {
+    "name": "go-event-inbox",
+    "title": "Приём событий",
+    "description": "Принимает события и не записывает повторно знакомые ID.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/go/go-event-inbox",
+    "demo": "go-event-inbox/",
+    "live": false
+  },
+  {
+    "name": "spy-bot",
+    "title": "Шпион для Telegram",
+    "description": "Игра «Шпион» в Telegram для компании друзей.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/spy-bot",
+    "demo": "https://mainstarkov.github.io/spy-bot/",
+    "live": false
+  },
+  {
+    "name": "veil-browser",
+    "title": "Veil Browser",
+    "description": "Interactive privacy-first browser UI prototype with ephemeral sessions",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/veil-browser",
+    "demo": "https://mainstarkov.github.io/veil-browser/",
+    "live": true
+  },
+  {
+    "name": "eztext-practice",
+    "title": "EZText",
+    "description": "EZText — проект учебной практики, Telegram OCR и HTTP API",
+    "stack": "Python / Бэкенд",
+    "filters": [
+      "python",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/eztext-practice",
+    "demo": "https://mainstarkov.github.io/eztext-practice/",
+    "live": false
+  },
+  {
+    "name": "py-study-telegram",
+    "title": "py-study-telegram",
+    "description": "Telegram-бот для повторения карточек. Команда /card выдаёт вопрос, /answer показывает ответ последней карточки в чате.",
+    "stack": "Python / Бэкенд",
+    "filters": [
+      "python",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-study-telegram",
+    "demo": "py-study-telegram/",
+    "live": false
+  },
+  {
+    "name": "ridex-local",
+    "title": "ridex-local",
+    "description": "RideX: portable Windows website with local accounts and LAN access",
+    "stack": "Веб / Бэкенд",
+    "filters": [
+      "web",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/ridex-local",
+    "demo": "https://mainstarkov.github.io/ridex-local/",
+    "live": false
+  },
+  {
+    "name": "go-csv-columns",
+    "title": "go-csv-columns",
+    "description": "Извлекает выбранные столбцы CSV в заданном порядке и пишет результат в стандартный вывод.",
+    "stack": "Go",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/go-csv-columns",
+    "demo": "https://mainstarkov.github.io/go-csv-columns/",
+    "live": false
+  },
+  {
+    "name": "go-dir-weight",
+    "title": "go-dir-weight",
+    "description": "Показывает размер файлов по папкам первого уровня. Символические ссылки пропускаются.",
+    "stack": "Go",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/go-dir-weight",
+    "demo": "https://mainstarkov.github.io/go-dir-weight/",
+    "live": false
+  },
+  {
+    "name": "go-file-fingerprint",
+    "title": "go-file-fingerprint",
+    "description": "Вычисляет SHA-256 файла и умеет сверять его с ожидаемой контрольной суммой.",
+    "stack": "Go",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/go-file-fingerprint",
+    "demo": "https://mainstarkov.github.io/go-file-fingerprint/",
+    "live": false
+  },
+  {
+    "name": "go-text-tally",
+    "title": "go-text-tally",
+    "description": "Считает строки, слова и символы Unicode в UTF-8-файле.",
+    "stack": "Go",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/go-text-tally",
+    "demo": "https://mainstarkov.github.io/go-text-tally/",
+    "live": false
+  },
+  {
+    "name": "go-timer-board",
+    "title": "go-timer-board",
+    "description": "Терминальный таймер обратного отсчёта с поддержкой секунд и минут.",
+    "stack": "Go",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/go-timer-board",
+    "demo": "https://mainstarkov.github.io/go-timer-board/",
+    "live": false
+  },
+  {
+    "name": "go-url-batch",
+    "title": "go-url-batch",
+    "description": "Разбирает список URL из файла и группирует адреса по домену.",
+    "stack": "Go",
+    "filters": [
+      "go"
+    ],
+    "code": "https://github.com/mainstarkov/go-url-batch",
+    "demo": "https://mainstarkov.github.io/go-url-batch/",
+    "live": false
+  },
+  {
+    "name": "jsonbridge",
+    "title": "jsonbridge",
+    "description": "Local JSON and CSV converter with UTF-8 support",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/jsonbridge",
+    "demo": "https://mainstarkov.github.io/jsonbridge/",
+    "live": false
+  },
+  {
+    "name": "netscout",
+    "title": "netscout",
+    "description": "Domain & IP reconnaissance CLI tool — DNS lookup, reverse DNS, geolocation with Google Maps link",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/netscout",
+    "demo": "https://mainstarkov.github.io/netscout/",
+    "live": false
+  },
+  {
+    "name": "node-coffee-ratio",
+    "title": "Кофе по весам",
+    "description": "Лендинг с калькулятором пропорций для фильтр-кофе.",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/node-coffee-ratio",
+    "demo": "https://mainstarkov.github.io/node-coffee-ratio/",
+    "live": true
+  },
+  {
+    "name": "node-decision-bot",
+    "title": "node-decision-bot",
+    "description": "Терминальный бот для равновероятного выбора из нескольких вариантов.",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/nodejs/node-decision-bot",
+    "demo": "node-decision-bot/",
+    "live": false
+  },
+  {
+    "name": "node-dev-port",
+    "title": "node-dev-port",
+    "description": "Проверяет, доступна ли локальная TCP-связь с приложением на указанном порту.",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/nodejs/node-dev-port",
+    "demo": "node-dev-port/",
+    "live": false
+  },
+  {
+    "name": "node-query-card",
+    "title": "node-query-card",
+    "description": "Преобразует параметры строки запроса в JSON. Повторяющиеся ключи сохраняются как массивы.",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/nodejs/node-query-card",
+    "demo": "node-query-card/",
+    "live": false
+  },
+  {
+    "name": "node-reading-pace",
+    "title": "Читать в своём темпе",
+    "description": "Лендинг-планировщик чтения по оставшимся страницам и дням.",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/node-reading-pace",
+    "demo": "https://mainstarkov.github.io/node-reading-pace/",
+    "live": true
+  },
+  {
+    "name": "node-team-split",
+    "title": "Счёт на всех",
+    "description": "Лендинг для деления общего счёта с распределением остатка по копейкам.",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/node-team-split",
+    "demo": "https://mainstarkov.github.io/node-team-split/",
+    "live": true
+  },
+  {
+    "name": "passforge",
+    "title": "passforge",
+    "description": "Secure password generator with entropy analysis and crack time estimation — pure Python CLI tool",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/passforge",
+    "demo": "https://mainstarkov.github.io/passforge/",
+    "live": false
+  },
+  {
+    "name": "py-focus-pick",
+    "title": "py-focus-pick",
+    "description": "Выбирает, за какую задачу взяться, с учётом важности и оценки времени.",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-focus-pick",
+    "demo": "py-focus-pick/",
+    "live": false
+  },
+  {
+    "name": "py-markdown-index",
+    "title": "py-markdown-index",
+    "description": "Строит Markdown-каталог заметок из заголовков и относительных ссылок.",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-markdown-index",
+    "demo": "py-markdown-index/",
+    "live": false
+  },
+  {
+    "name": "py-rss-digest",
+    "title": "py-rss-digest",
+    "description": "Собирает заголовки из локального RSS или Atom в компактную текстовую ленту.",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-rss-digest",
+    "demo": "py-rss-digest/",
+    "live": false
+  },
+  {
+    "name": "py-srt-shift",
+    "title": "py-srt-shift",
+    "description": "Сдвигает временные метки субтитров SRT на указанное число миллисекунд. Результат выводится в терминал.",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-srt-shift",
+    "demo": "py-srt-shift/",
+    "live": false
+  },
+  {
+    "name": "py-subscription-ledger",
+    "title": "py-subscription-ledger",
+    "description": "Сводит месячные и годовые подписки к годовому бюджету. Суммы считаются через Decimal.",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/python/py-subscription-ledger",
+    "demo": "py-subscription-ledger/",
+    "live": false
+  },
+  {
+    "name": "rezyme",
+    "title": "Резюме",
+    "description": "Personal resume & portfolio website — clean responsive design",
+    "stack": "Веб",
+    "filters": [
+      "web"
+    ],
+    "code": "https://github.com/mainstarkov/rezyme",
+    "demo": "https://mainstarkov.github.io/rezyme/",
+    "live": true
+  },
+  {
+    "name": "rs-line-dedupe",
+    "title": "rs-line-dedupe",
+    "description": "Удаляет повторяющиеся строки UTF-8, сохраняя порядок первых вхождений.",
+    "stack": "Rust",
+    "filters": [
+      "rust"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-line-dedupe",
+    "demo": "rs-line-dedupe/",
+    "live": false
+  },
+  {
+    "name": "rs-log-count",
+    "title": "rs-log-count",
+    "description": "Считает события INFO, WARN, ERROR и прочие уровни по первому полю каждой непустой строки.",
+    "stack": "Rust",
+    "filters": [
+      "rust"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-log-count",
+    "demo": "rs-log-count/",
+    "live": false
+  },
+  {
+    "name": "rs-palette-contrast",
+    "title": "rs-palette-contrast",
+    "description": "Считает коэффициент контраста двух цветов sRGB по формуле относительной яркости.",
+    "stack": "Rust",
+    "filters": [
+      "rust"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-palette-contrast",
+    "demo": "rs-palette-contrast/",
+    "live": false
+  },
+  {
+    "name": "rs-pomodoro-plan",
+    "title": "rs-pomodoro-plan",
+    "description": "Рассчитывает расписание фокус-сессий и перерывов по минутам от начала.",
+    "stack": "Rust",
+    "filters": [
+      "rust"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-pomodoro-plan",
+    "demo": "rs-pomodoro-plan/",
+    "live": false
+  },
+  {
+    "name": "rs-unit-counter",
+    "title": "rs-unit-counter",
+    "description": "Переводит размер в байтах в двоичные единицы IEC.",
+    "stack": "Rust",
+    "filters": [
+      "rust"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-unit-counter",
+    "demo": "rs-unit-counter/",
+    "live": false
+  },
+  {
+    "name": "rs-week-grid",
+    "title": "rs-week-grid",
+    "description": "Генерирует Markdown-таблицу на семь дней для списка привычек.",
+    "stack": "Rust",
+    "filters": [
+      "rust"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio-projects/tree/main/projects/rust/rs-week-grid",
+    "demo": "rs-week-grid/",
+    "live": false
+  },
+  {
+    "name": "site-mirror-kit",
+    "title": "site-mirror-kit",
+    "description": "Save browser-visible website resources and replay them on localhost",
+    "stack": "Node.js",
+    "filters": [
+      "node"
+    ],
+    "code": "https://github.com/mainstarkov/site-mirror-kit",
+    "demo": "https://mainstarkov.github.io/site-mirror-kit/",
+    "live": false
+  },
+  {
+    "name": "socksy",
+    "title": "socksy",
+    "description": "SOCKSY — дизайнерские носки. Интерактивный лендинг с корзиной, модалками и картой доставки. Портфолио-проект.",
+    "stack": "Веб",
+    "filters": [
+      "web"
+    ],
+    "code": "https://github.com/mainstarkov/socksy",
+    "demo": "https://mainstarkov.github.io/socksy/",
+    "live": true
+  },
+  {
+    "name": "taskflow",
+    "title": "taskflow",
+    "description": "Terminal task manager with priorities, categories and progress tracking — pure Python CLI tool",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/taskflow",
+    "demo": "https://mainstarkov.github.io/taskflow/",
+    "live": false
+  },
+  {
+    "name": "tidybox",
+    "title": "tidybox",
+    "description": "Safe file organizer with dry-run mode and overwrite protection",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/tidybox",
+    "demo": "https://mainstarkov.github.io/tidybox/",
+    "live": false
+  },
+  {
+    "name": "tripplan",
+    "title": "TripPlan",
+    "description": "TripPlan — планировщик путешествий",
+    "stack": "Веб",
+    "filters": [
+      "web"
+    ],
+    "code": "https://github.com/mainstarkov/tripplan",
+    "demo": "https://mainstarkov.github.io/tripplan/",
+    "live": true
+  },
+  {
+    "name": "uptime-check",
+    "title": "uptime-check",
+    "description": "Dependency-free website uptime and response-time checker",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/uptime-check",
+    "demo": "https://mainstarkov.github.io/uptime-check/",
+    "live": false
+  },
+  {
+    "name": "wanderlust",
+    "title": "wanderlust",
+    "description": "Wanderlust — современное туристическое агентство. Красивый лендинг с поиском туров, модальными окнами и слайдером отзывов.",
+    "stack": "Веб",
+    "filters": [
+      "web"
+    ],
+    "code": "https://github.com/mainstarkov/wanderlust",
+    "demo": "https://mainstarkov.github.io/wanderlust/",
+    "live": true
+  },
+  {
+    "name": "weathernow",
+    "title": "weathernow",
+    "description": "Current weather and 5-day forecast in your terminal — free API, zero dependencies, pure Python",
+    "stack": "Python",
+    "filters": [
+      "python"
+    ],
+    "code": "https://github.com/mainstarkov/weathernow",
+    "demo": "https://mainstarkov.github.io/weathernow/",
+    "live": false
+  }
+]
