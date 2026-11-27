@@ -7,6 +7,8 @@
 :root{color-scheme:dark;background:#111216;color:#fff6e9;font:16px system-ui;--line:#40414b;--accent:#ffb884;--muted:#c1bec7}
 *{box-sizing:border-box}main{max-width:1050px;margin:auto;padding:clamp(20px,5vw,58px)}header{border-bottom:1px solid var(--line);padding-bottom:22px}.logo{color:var(--accent);font:bold .85rem ui-monospace,monospace;letter-spacing:.13em}
 h1{font:normal clamp(2.6rem,8vw,6rem)/1 Georgia,serif;letter-spacing:-.055em;margin:12px 0;overflow-wrap:anywhere}p,summary{color:var(--muted)}button,input{font:inherit;border:1px solid var(--line);border-radius:10px;background:#202129;color:inherit;padding:10px 13px}button{cursor:pointer}button[aria-pressed=true]{background:var(--accent);color:#23170f}.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:24px 0}.toolbar label{margin-left:auto}.flow{border:1px solid var(--line);border-radius:14px;margin:12px 0;padding:15px;background:#1a1b21}.nodes{display:grid;grid-template-columns:minmax(0,1fr) minmax(65px,140px) minmax(0,1fr);align-items:center;gap:8px}.node{padding:12px 8px;text-align:center;background:#242633;border-radius:8px;font: .9rem ui-monospace,monospace;overflow-wrap:anywhere}.edge{text-align:center;color:var(--accent);font-size:.73rem}.edge svg{display:block;max-width:100%;height:11px;width:100%;margin-top:4px}.edge path{stroke:currentColor;stroke-width:2;fill:none}details{margin-top:12px;font-size:.85rem;overflow-wrap:anywhere}summary{cursor:pointer}label{color:var(--muted)}[hidden]{display:none!important}@media(max-width:555px){.toolbar label{margin-left:0}.node{font-size:.77rem}}:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.journey{padding:16px;border:1px solid var(--line);border-radius:14px;background:#1a1b21}.journey h2{margin:0;font-size:1.05rem}.steps,.targets{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:0;list-style:none}.steps li{display:flex;align-items:center;gap:8px;color:var(--accent);overflow-wrap:anywhere}.steps li+li::before{content:"→"}.targets button{padding:5px 10px}.journey select{font:inherit;background:#202129;color:inherit;border:1px solid var(--line);border-radius:8px;padding:6px;margin-left:6px;max-width:100%}
 </style>
 <main>
 <header><div class="logo">REPOMAP</div><h1>{{.Project}}</h1><p>{{.Files}} файлов изучено · {{len .Edges}} связей найдено</p><p>Карта построена по исходникам. Динамические маршруты и действия могут потребовать проверки в коде.</p></header>
@@ -17,6 +19,12 @@ h1{font:normal clamp(2.6rem,8vw,6rem)/1 Georgia,serif;letter-spacing:-.055em;mar
 <button data-kind="bot" type="button" aria-pressed="false">Бот</button>
 <label>Поиск <input type="search" id="search" placeholder="Команда, маршрут или файл"></label>
 </div>
+<section class="journey" id="journey" hidden>
+ <h2>Маршрут по сайту</h2>
+ <p><label>Начальная страница <select id="start-page"></select></label></p>
+ <ol class="steps" id="steps" aria-label="Пройденный путь" aria-live="polite"></ol>
+ <div class="targets" id="targets"></div>
+</section>
 <p id="shown" aria-live="polite"></p>
 <section id="map" aria-label="Связи">
 {{range .Edges}}
@@ -37,7 +45,47 @@ const controls = [...document.querySelectorAll('button[data-kind]')];
 const flows = [...document.querySelectorAll('.flow')];
 const search = document.querySelector('#search');
 let kind = 'all';
+const paths = new Map();
+for (const flow of flows.filter(item => item.dataset.kind === 'site')) {
+ const [from, to] = [...flow.querySelectorAll('.node')].map(node => node.textContent);
+ if (!paths.has(from)) paths.set(from, new Set());
+ paths.get(from).add(to);
+}
+const start = document.querySelector('#start-page');
+const steps = document.querySelector('#steps');
+const targets = document.querySelector('#targets');
+for (const path of [...paths.keys()].sort()) start.add(new Option(path, path));
+let trail = start.value ? [start.value] : [];
+function drawTrail() {
+ steps.replaceChildren(...trail.map(path => {
+  const step = document.createElement('li');
+  step.textContent = path;
+  return step;
+ }));
+ const next = paths.get(trail.at(-1)) || new Set();
+ targets.replaceChildren(...[...next].map(path => {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = 'Перейти: ' + path;
+  button.addEventListener('click', () => {
+   trail.push(path);
+   drawTrail();
+   targets.firstElementChild?.focus();
+  });
+  return button;
+ }));
+ if (trail.length > 1) {
+  const back = document.createElement('button');
+  back.type = 'button';
+  back.textContent = 'На шаг назад';
+  back.addEventListener('click', () => { trail.pop(); drawTrail(); targets.firstElementChild?.focus(); });
+  targets.append(back);
+ }
+}
+start.addEventListener('change', () => { trail = [start.value]; drawTrail(); });
+drawTrail();
 function update() {
+ document.querySelector('#journey').hidden = kind !== 'site' || paths.size === 0;
  const term = search.value.trim().toLowerCase();
  let count = 0;
  for (const flow of flows) {
