@@ -11,17 +11,27 @@ function createRepoGraph() {
    <div class="diagram-modes" aria-label="Режим схемы">
    <button type="button" data-diagram="overview" aria-pressed="true">Связи</button>
    <button type="button" data-diagram="conditions" aria-pressed="false">Условия</button></div>
-   <label class="diagram-zoom">Масштаб <select id="diagram-zoom"><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option></select></label>
+   <div class="diagram-scale" aria-label="Управление масштабом">
+    <button type="button" id="diagram-minus" aria-label="Уменьшить масштаб">−</button>
+    <label class="diagram-zoom"><span class="diagram-sr">Масштаб</span><select id="diagram-zoom" aria-label="Масштаб"><option value=".25">25%</option><option value=".5">50%</option><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option><option value="2">200%</option></select></label>
+    <button type="button" id="diagram-plus" aria-label="Увеличить масштаб">+</button>
+   </div>
+   <button type="button" id="diagram-fit">Вписать</button>
    <button type="button" id="diagram-full">На весь экран</button>
   </div></header>
   <div class="diagram-navigation">
    <label id="diagram-jump-label" hidden>Перейти к разделу <select id="diagram-jump"><option value="">Выбрать раздел</option></select></label>
    <label id="diagram-handler-label" hidden>Функция <select id="diagram-handler"></select></label>
+   <button type="button" id="diagram-all" aria-pressed="false" hidden>Все ветки</button>
    <button type="button" id="diagram-top">↑ К началу схемы</button>
   </div>
-  <div class="diagram-scroll" tabindex="0" aria-label="Прокручиваемая схема">
-   <div id="diagram-content"></div>
-  </div>`;
+  <div class="diagram-workspace">
+   <div class="diagram-scroll" tabindex="0" aria-label="Прокручиваемая схема">
+    <div class="diagram-stage"><div id="diagram-content"></div></div>
+   </div>
+   <button type="button" id="diagram-minimap" aria-label="Мини-карта схемы" title="Щёлкните по мини-карте для перехода"><canvas aria-hidden="true"></canvas></button>
+  </div>
+  <p class="diagram-hint"><span>Перетаскивание за фон · Ctrl / ⌘ + колесо для масштаба</span><span>Свайп для перемещения · два пальца для масштаба</span></p>`;
  const toolbar = document.querySelector(".toolbar");
  toolbar.before(section);
  toolbar.id = "repo-connections";
@@ -47,6 +57,19 @@ function createRepoGraph() {
  keepScrollInside(viewport);
  keepScrollInside(list);
  const content = section.querySelector("#diagram-content");
+ const canvas = installDiagramCanvas(section, viewport, content);
+ const allBranches = section.querySelector("#diagram-all");
+ allBranches.addEventListener("click", () => {
+  const open = allBranches.getAttribute("aria-pressed") !== "true";
+  for (const button of content.querySelectorAll('.diagram-card[data-type="button"] .diagram-toggle')) {
+   if (button.getAttribute("aria-expanded") !== String(open)) button.click();
+  }
+  content.classList.toggle("diagram-wide-tree", open);
+  allBranches.setAttribute("aria-pressed", String(open));
+  allBranches.textContent = open ? "Свернуть ветки" : "Все ветки";
+  if (open) canvas.fit();
+  else canvas.reset();
+ });
  const handler = section.querySelector("#diagram-handler");
  const handlerLabel = section.querySelector("#diagram-handler-label");
  const jump = section.querySelector("#diagram-jump");
@@ -179,8 +202,11 @@ function createRepoGraph() {
  function expandableButton(edge) {
   return expandableNode(edge.From, "button", source(edge), () => [callbackTree(edge)]);
  }
- function group(label, children) {
-  return children.length ? [node(label, "group", children)] : [];
+ function group(label, children, layout = "") {
+  if (!children.length) return [];
+  const item = node(label, "group", children);
+  if (layout) item.lastElementChild.classList.add(layout);
+  return [item];
  }
  function websiteTree(links) {
   const byPage = new Map();
@@ -234,7 +260,7 @@ function createRepoGraph() {
      return edge.From === "Telegram" ? node(edge.To, "value", [], source(edge))
       : node(edge.From, "value", [node(edge.To, "action", [], source(edge), action)]);
     })),
-    ...group("Кнопки", cap(buttons, expandableButton)),
+    ...group("Кнопки", cap(buttons, expandableButton), "diagram-button-grid"),
     ...group("Другие callback", cap(bot.filter(edge => edge.Label === "Callback" &&
      !buttons.some(button => button.To.split(":")[0] === edge.From)),
      edge => node(edge.From,"value",[node(edge.To,"action",[],source(edge))]))),
@@ -308,14 +334,18 @@ function createRepoGraph() {
    return new Option(group.querySelector(".diagram-text").textContent, String(index));
   }));
   jumpLabel.hidden = groups.length === 0;
+  allBranches.hidden = conditions || !tree.querySelector('.diagram-card[data-type="button"]');
+  allBranches.setAttribute("aria-pressed", "false");
+  allBranches.textContent = "Все ветки";
+  content.classList.remove("diagram-wide-tree");
   toTop();
+  canvas.refresh();
   section.querySelector("#diagram-summary").textContent = conditions && flow
    ? `${flow.File}:${flow.Line} · сверху вниз в порядке исходника${flow.Limited ? " · показаны первые 180 элементов" : ""}`
    : "Нажмите на кнопку бота, чтобы раскрыть её условия прямо в дереве.";
  }
  modes.forEach(button => button.addEventListener("click", () => { mode = button.dataset.diagram; paint(); }));
  handler.addEventListener("change", paint);
- section.querySelector("#diagram-zoom").addEventListener("change", event => { content.style.zoom = event.target.value; });
  return (repo, ref, edges, flows, callbacks) => {
   const priority = flow => /callback|handle|dispatch|route|message|process/i.test(flow.Name) ? 0 : 1;
   flows.sort((a,b) => priority(a) - priority(b) || Number(!/callback/i.test(a.Name)) - Number(!/callback/i.test(b.Name)) || a.File.localeCompare(b.File) || a.Line - b.Line);
@@ -325,6 +355,7 @@ function createRepoGraph() {
   section.hidden = false;
   menu.hidden = false;
   list.scrollTop = 0;
+  canvas.reset();
   paint();
  };
 }

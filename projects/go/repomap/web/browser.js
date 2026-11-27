@@ -35,7 +35,14 @@ function parseRepository(input) {
 async function request(url, timeout = 12000) {
  const response = await fetch(url, { credentials: "omit", signal: AbortSignal.timeout(timeout) });
  if (response.status === 403 || response.status === 429) {
-  throw new Error("GitHub ограничил число запросов. Попробуйте позже или запустите локальную версию.");
+  const body = await response.json().catch(() => ({}));
+  const rateLimited = response.status === 429 || response.headers.get("x-ratelimit-remaining") === "0"
+   || response.headers.has("retry-after") || /rate limit/i.test(body.message || "");
+  const error = new Error(rateLimited
+   ? "Сервис ограничил число запросов. Попробуйте позже или запустите локальную версию."
+   : "Сервис не разрешил доступ к этому репозиторию.");
+  if (rateLimited) error.name = "RateLimitError";
+  throw error;
  }
  if (response.status === 404) throw new Error("Репозиторий или файл недоступен. Проверьте ссылку и публичность репозитория.");
  if (!response.ok) throw new Error(`GitHub вернул HTTP ${response.status}.`);
@@ -64,7 +71,7 @@ async function repositoryTree(repo) {
   const tree = await (await request(`${api}/git/trees/${commit.sha}?recursive=1`, 4500)).json();
   return { items: tree.tree.filter(file => file.type === "blob" && /^100/.test(file.mode)), ref: commit.sha, partial: tree.truncated, cached: false };
  } catch (error) {
-  if (!(error instanceof TypeError) && error.name !== "TimeoutError") throw error;
+  if (!(error instanceof TypeError) && !["TimeoutError", "RateLimitError"].includes(error.name)) throw error;
   const listing = await (await request(`https://data.jsdelivr.com/v1/package/gh/${repo}@HEAD/flat`)).json();
   return { items: listing.files.map(file => ({ path: file.name.replace(/^\//, ""), size: file.size, hash: file.hash })), ref: "HEAD", partial: false, cached: true };
  }
