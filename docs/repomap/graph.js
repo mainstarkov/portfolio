@@ -34,7 +34,7 @@ function createRepoGraph() {
  document.addEventListener("fullscreenchange", () => {
   fullscreen.textContent = document.fullscreenElement === section ? "Выйти из полноэкранного режима" : "На весь экран";
  });
- let data, mode = "overview";
+ let data, mode = "overview", buttonID = 0;
 
  function node(text, type, children = [], link = null, action = null) {
   const item = el("li", "", "diagram-node");
@@ -63,14 +63,68 @@ function createRepoGraph() {
   link.rel = "noopener";
   return link;
  }
+ function callbackSteps(steps, target, continuation = null) {
+  for (const [index, step] of (steps || []).entries()) {
+   const next = steps[index + 1] || continuation;
+   if (step.Line === target) return {steps:[step], next};
+   for (const branch of step.Branches || []) {
+    if (branch.Line === target) {
+     const otherBranches = step.Branches.filter(item => item !== branch);
+     if (!otherBranches.some(item => item.Label === "default")) {
+      otherBranches.push({Label:"Нет совпадения", Steps:[]});
+     }
+     return {
+      steps: [{
+       ...step, Kind:"condition", Line:target, Text:`${step.Text} → case ${branch.Label}?`,
+       Branches: [
+        {Label:"Да", Steps:branch.Steps},
+        {Label:"Нет", Steps:[{...step, Text:"Другие варианты этого switch", Branches:otherBranches}]},
+       ],
+      }],
+      next,
+     };
+    }
+    const nested = callbackSteps(branch.Steps, target, next);
+    if (nested) return {
+     steps:[{...step, Branches:step.Branches.map(item => item === branch
+      ? {...item, Steps:nested.steps, Next:nested.next} : item)}],
+     next,
+    };
+   }
+  }
+  return null;
+ }
  function callbackTree(edge) {
-  const match = data.callbacks.get(edge.To.split(":")[0]);
-  if (!match) return node(edge.To, "value");
-  const functionIndex = data.flows.findIndex(flow =>
-   flow.File === match.File && flow.Line <= match.Line && flow.End >= match.Line);
+  const match = edge.Label === "Кнопка" && data.callbacks.get(edge.To.split(":")[0]);
+  if (!match) return node(edge.To, "value", [], source(edge));
+  const flow = data.flows.find(item =>
+   item.File === match.File && item.Line <= match.Line && item.End >= match.Line);
+  const focused = flow && callbackSteps(flow.Steps, match.Line);
+  const children = focused ? conditionTree(flow, focused.steps, focused.next)
+   : [node("Подробности этой ветки в исходниках", "value")];
   return node(edge.To, "value", [
-   node(match.To, "action", [], source(match), functionIndex < 0 ? null : () => showConditions(functionIndex, match.Line))
+   node(match.To, "action", children, source(match))
   ]);
+ }
+ function expandableButton(edge) {
+  const item = node(edge.From, "button", [], source(edge));
+  const card = item.firstElementChild;
+  const disclosure = el("button", edge.From, "diagram-toggle");
+  disclosure.type = "button";
+  disclosure.setAttribute("aria-expanded", "false");
+  card.firstElementChild.replaceWith(disclosure);
+  const children = el("ul", "", "diagram-children diagram-button-steps");
+  children.id = `diagram-button-steps-${++buttonID}`;
+  children.hidden = true;
+  disclosure.setAttribute("aria-controls", children.id);
+  item.append(children);
+  disclosure.addEventListener("click", () => {
+   const opening = children.hidden;
+   if (opening && !children.firstChild) children.append(callbackTree(edge));
+   children.hidden = !opening;
+   disclosure.setAttribute("aria-expanded", String(opening));
+  });
+  return item;
  }
  function group(label, children) {
   return children.length ? [node(label, "group", children)] : [];
@@ -127,7 +181,7 @@ function createRepoGraph() {
      return edge.From === "Telegram" ? node(edge.To, "value", [], source(edge))
       : node(edge.From, "value", [node(edge.To, "action", [], source(edge), action)]);
     })),
-    ...group("Кнопки", cap(buttons, edge => node(edge.From,"value",[callbackTree(edge)],source(edge)))),
+    ...group("Кнопки", cap(buttons, expandableButton)),
     ...group("Другие callback", cap(bot.filter(edge => edge.Label === "Callback" &&
      !buttons.some(button => button.To.split(":")[0] === edge.From)),
      edge => node(edge.From,"value",[node(edge.To,"action",[],source(edge))]))),
@@ -136,16 +190,27 @@ function createRepoGraph() {
    ...group("Страницы", websiteTree(site)),
   ];
  }
- function conditionTree(flow, steps) {
-  return (steps || []).map(step => {
+ function exits(steps) {
+  return (steps || []).some(step => step.Kind === "exit" ||
+   (step.Kind === "condition" && step.Branches.every(branch => exits(branch.Steps))));
+ }
+ function conditionTree(flow, steps, continuation = null) {
+  const locator = line => source({File:flow.File,Line:line}, `↗ строка ${line}`);
+  return (steps || []).map((step, index) => {
+   const next = steps[index + 1] || continuation;
    const children = (step.Branches || []).map(branch => {
-    const item = node(branch.Label,"branch",
-     branch.Steps?.length ? conditionTree(flow,branch.Steps) : [node("К следующему шагу","value")],
-     branch.Line ? source({File:flow.File,Line:branch.Line},`↗ строка ${branch.Line}`) : null);
+    const branchNext = branch.Next === undefined ? next : branch.Next;
+    const branchSteps = conditionTree(flow, branch.Steps, branchNext);
+    if (!exits(branch.Steps)) {
+     branchSteps.push(branchNext
+      ? node(`Дальше: ${branchNext.Text}`, "next", [], locator(branchNext.Line))
+      : node("Конец показанной ветки", "value"));
+    }
+    const item = node(branch.Label,"branch",branchSteps,branch.Line ? locator(branch.Line) : null);
     if (branch.Line) item.dataset.line = branch.Line;
     return item;
    });
-   const item = node(step.Text,step.Kind,children,source({File:flow.File,Line:step.Line},`↗ строка ${step.Line}`));
+   const item = node(step.Text,step.Kind,children,locator(step.Line));
    item.dataset.line = step.Line;
    return item;
   });
@@ -179,7 +244,7 @@ function createRepoGraph() {
   content.replaceChildren(tree.childElementCount ? tree : el("p", conditions ? "В поддерживаемых исходниках условия не найдены." : "Связей для схемы не найдено."));
   section.querySelector("#diagram-summary").textContent = conditions && flow
    ? `${flow.File}:${flow.Line} · сверху вниз в порядке исходника${flow.Limited ? " · показаны первые 180 элементов" : ""}`
-   : "Общая карта команд, кнопок, маршрутов и переходов.";
+   : "Нажмите на кнопку бота, чтобы раскрыть её условия прямо в дереве.";
  }
  modes.forEach(button => button.addEventListener("click", () => { mode = button.dataset.diagram; paint(); }));
  handler.addEventListener("change", paint);
