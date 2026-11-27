@@ -80,3 +80,15 @@
 @media(max-width:600px){.diagram-wide-tree .diagram-card{max-width:290px}}
 
 .repo-example{display:inline-flex;align-items:center;padding:10px 13px;border:1px solid var(--line);border-radius:10px;color:inherit;text-decoration:none}.repo-example:hover{border-color:var(--accent)}
+
+.diagram-disclosure{cursor:pointer;align-items:stretch;padding:0}
+.diagram-scroll .diagram-disclosure{cursor:pointer}
+.diagram-card.diagram-disclosure .diagram-toggle{display:flex;align-items:center;gap:5px;min-height:42px;padding:9px 12px;font-size:.86rem}
+.diagram-card.diagram-disclosure .diagram-toggle::before{flex:none;margin-right:3px}
+.diagram-disclosure .diagram-source{align-self:center;margin-right:10px;padding-block:6px}
+.diagram-disclosure:hover{border-color:#ffb884}
+.diagram-card.diagram-disclosure:has(.diagram-toggle[aria-expanded=true]){border-color:#d7966c;background:#382a24}
+.diagram-wide-tree .diagram-card.diagram-disclosure{padding:0}
+.diagram-wide-tree .diagram-card.diagram-disclosure .diagram-toggle{min-height:31px;padding:5px 8px}
+.diagram-disclosure-tools{display:flex;flex-wrap:wrap;gap:6px}
+.diagram-disclosure-tools button:disabled{opacity:.45;cursor:default}

@@ -5,7 +5,7 @@ browserPanel.innerHTML = `
  <h2>Построить карту GitHub-репозитория</h2>
  <form id="repo-form">
   <label>Ссылка на публичный репозиторий <input id="repo-url" type="url" placeholder="https://github.com/vasypypkin/exemple" required></label>
-  <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><a class="repo-example" href="./">Готовый пример</a></div>
+  <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><a class="repo-example" href="./">Готовый пример</a><a class="repo-example" href="start.html">Скачать и запустить</a></div>
  </form>
  <p id="repo-status" role="status"></p>
  <p>Анализ идёт в браузере по исходникам из основной ветки. Для закрытых репозиториев используйте локальную версию.</p>`;

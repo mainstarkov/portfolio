@@ -22,7 +22,10 @@ function createRepoGraph() {
   <div class="diagram-navigation">
    <label id="diagram-jump-label" hidden>Перейти к разделу <select id="diagram-jump"><option value="">Выбрать раздел</option></select></label>
    <label id="diagram-handler-label" hidden>Функция <select id="diagram-handler"></select></label>
-   <button type="button" id="diagram-all" aria-pressed="false" hidden>Все ветки</button>
+   <div class="diagram-disclosure-tools" hidden>
+    <button type="button" id="diagram-all" aria-pressed="false">Все ветки</button>
+    <button type="button" id="diagram-collapse" disabled>Свернуть ветки</button>
+   </div>
    <button type="button" id="diagram-top">↑ К началу схемы</button>
   </div>
   <div class="diagram-workspace">
@@ -59,16 +62,30 @@ function createRepoGraph() {
  const content = section.querySelector("#diagram-content");
  const canvas = installDiagramCanvas(section, viewport, content);
  const allBranches = section.querySelector("#diagram-all");
+ const collapseBranches = section.querySelector("#diagram-collapse");
+ const disclosureTools = section.querySelector(".diagram-disclosure-tools");
+ const openToggle = '.diagram-toggle[aria-expanded="true"]';
+ function visibleExpanded() {
+  return [...content.querySelectorAll(openToggle)].some(button => !button.closest("[hidden]"));
+ }
+ function updateDisclosures() {
+  collapseBranches.disabled = !visibleExpanded();
+  const closed = content.querySelector('.diagram-card[data-type="button"] .diagram-toggle[aria-expanded="false"]');
+  if (closed) allBranches.setAttribute("aria-pressed", "false");
+ }
  allBranches.addEventListener("click", () => {
-  const open = allBranches.getAttribute("aria-pressed") !== "true";
-  for (const button of content.querySelectorAll('.diagram-card[data-type="button"] .diagram-toggle')) {
-   if (button.getAttribute("aria-expanded") !== String(open)) button.click();
+  for (const button of content.querySelectorAll('.diagram-card[data-type="button"] .diagram-toggle[aria-expanded="false"]')) {
+   button.click();
   }
-  content.classList.toggle("diagram-wide-tree", open);
-  allBranches.setAttribute("aria-pressed", String(open));
-  allBranches.textContent = open ? "Свернуть ветки" : "Все ветки";
-  if (open) canvas.fit();
-  else canvas.reset();
+  content.classList.add("diagram-wide-tree");
+  allBranches.setAttribute("aria-pressed", "true");
+  canvas.fit();
+ });
+ collapseBranches.addEventListener("click", () => {
+  for (const button of [...content.querySelectorAll(openToggle)].reverse()) button.click();
+  content.classList.remove("diagram-wide-tree");
+  allBranches.setAttribute("aria-pressed", "false");
+  canvas.reset();
  });
  const handler = section.querySelector("#diagram-handler");
  const handlerLabel = section.querySelector("#diagram-handler-label");
@@ -182,6 +199,7 @@ function createRepoGraph() {
  function expandableNode(text, type, link, render) {
   const item = node(text, type, [], link);
   const card = item.firstElementChild;
+  card.classList.add("diagram-disclosure");
   const disclosure = el("button", text, "diagram-toggle");
   disclosure.type = "button";
   disclosure.setAttribute("aria-expanded", "false");
@@ -196,6 +214,17 @@ function createRepoGraph() {
    if (opening && !children.firstChild) children.append(...render());
    children.hidden = !opening;
    disclosure.setAttribute("aria-expanded", String(opening));
+   updateDisclosures();
+  });
+  card.addEventListener("click", event => {
+   if (!event.target.closest("button,a")) disclosure.click();
+  });
+  disclosure.addEventListener("keydown", event => {
+   const expanded = disclosure.getAttribute("aria-expanded") === "true";
+   if ((event.key === "ArrowRight" && !expanded) || (event.key === "ArrowLeft" && expanded)) {
+    event.preventDefault();
+    disclosure.click();
+   }
   });
   return item;
  }
@@ -334,9 +363,11 @@ function createRepoGraph() {
    return new Option(group.querySelector(".diagram-text").textContent, String(index));
   }));
   jumpLabel.hidden = groups.length === 0;
-  allBranches.hidden = conditions || !tree.querySelector('.diagram-card[data-type="button"]');
+  const hasButtons = !conditions && Boolean(tree.querySelector('.diagram-card[data-type="button"]'));
+  allBranches.hidden = !hasButtons;
+  disclosureTools.hidden = !hasButtons && !tree.querySelector(".diagram-toggle");
   allBranches.setAttribute("aria-pressed", "false");
-  allBranches.textContent = "Все ветки";
+  collapseBranches.disabled = true;
   content.classList.remove("diagram-wide-tree");
   toTop();
   canvas.refresh();

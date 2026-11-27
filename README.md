@@ -1,4 +1,4 @@
-# Portfolio · Алексей Старков
+# Portfolio · mainstarkov
 
 API на Go, Telegram-боты и небольшие инструменты на Go, Python, Node.js и Rust.
 
