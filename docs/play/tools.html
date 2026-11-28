@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Интерактивное демо · Portfolio</title>
 <link rel="stylesheet" href="weather.css">
-<link rel="stylesheet" href="tools.css">
-<script type="module" src="tools.js"></script>
+<link rel="stylesheet" href="tools.css?v=booking-2">
+<script type="module" src="tools.js?v=booking-2"></script>
 </head>
 <body>
 <main>
@@ -18,16 +18,35 @@
 </main>
 
 <template id="go-room-booking">
-<form>
-  <div class="fields booking-fields">
-    <label>Комната <select name="room"><option>Atlas</option><option>Orion</option><option>Vega</option></select></label>
-    <label>Начало <input name="start" type="datetime-local" required></label>
-    <label>Конец <input name="end" type="datetime-local" required></label>
-  </div>
-  <div class="actions"><button>Забронировать</button><button type="button" data-example disabled>Повторить последнюю бронь</button><button type="button" data-reset>Сбросить</button></div>
-</form>
-<p class="demo-note">Время указано по часам вашего устройства. Брони хранятся до перезагрузки страницы.</p>
-<section class="result"><h2>Расписание</h2><ul id="bookings" class="rows"></ul></section>
+<div class="booking-layout">
+  <form class="booking-card booking-form">
+    <h2>Новая бронь</h2>
+    <fieldset>
+      <legend>Комната</legend>
+      <div class="room-options">
+        <label><input type="radio" name="room" value="Atlas" checked><span>Atlas</span></label>
+        <label><input type="radio" name="room" value="Orion"><span>Orion</span></label>
+        <label><input type="radio" name="room" value="Vega"><span>Vega</span></label>
+      </div>
+    </fieldset>
+    <div class="fields booking-fields">
+      <label>Начало <input name="start" type="datetime-local" required></label>
+      <label>Конец <input name="end" type="datetime-local" required></label>
+    </div>
+    <button class="book-submit">Забронировать <span aria-hidden="true">→</span></button>
+    <div class="booking-links"><button type="button" data-example disabled>Повторить последнюю бронь</button></div>
+    <p class="demo-note">Время по часам устройства. Брони сохраняются до перезагрузки страницы.</p>
+  </form>
+  <section class="booking-card booking-schedule" aria-labelledby="schedule-heading">
+    <header><div><h2 id="schedule-heading">Расписание</h2><p id="booking-total"></p></div><button type="button" data-reset disabled>Сбросить</button></header>
+    <div id="booking-empty">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18m-12 5h6"/></svg>
+      <strong>Пока нет бронирований</strong>
+      <p>Выберите комнату и время, чтобы добавить первую бронь.</p>
+    </div>
+    <div id="bookings"></div>
+  </section>
+</div>
 </template>
 
 <template id="go-choice-poll">

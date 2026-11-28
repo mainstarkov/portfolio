@@ -1,7 +1,7 @@
 import {entries} from './demo.js';
 
 const tools = {
-  'go-room-booking': ['Бронирование комнат','Выберите комнату и время. Если бронь пересекается с другой, демо покажет конфликт.','../go-room-booking/'],
+  'go-room-booking': ['Бронирование комнат','Забронируйте переговорную и проверьте, свободна ли она в нужное время.','../go-room-booking/'],
   'go-choice-poll': ['Голосование за язык','Выберите Go, Python или Rust. Результаты обновляются сразу после голосования.','../go-choice-poll/'],
   'go-event-inbox': ['Go Event Inbox','Отправьте событие, затем попробуйте повторить его или использовать тот же ID для другого типа.','../go-event-inbox/'],
   'go-job-queue': ['Go Job Queue','Отправьте текст и проследите, как задача из очереди получает результат SHA-256.','../go-job-queue/'],
@@ -246,7 +246,19 @@ function jobQueue(form, run) {
 function roomBooking(form, run) {
   const list = panel.querySelector('#bookings');
   const repeat = panel.querySelector('[data-example]');
-  const format = new Intl.DateTimeFormat('ru', {dateStyle:'medium',timeStyle:'short'});
+  const reset = panel.querySelector('[data-reset]');
+  const empty = panel.querySelector('#booking-empty');
+  const dateFormat = new Intl.DateTimeFormat('ru', {dateStyle:'full'});
+  const timeFormat = new Intl.DateTimeFormat('ru', {timeStyle:'short'});
+  const fullFormat = new Intl.DateTimeFormat('ru', {dateStyle:'short',timeStyle:'short'});
+  document.body.classList.add('booking-page');
+  status.classList.add('booking-status');
+  form.querySelector('.book-submit').after(status);
+
+  function feedback(message, tone) {
+    status.dataset.tone = tone;
+    status.textContent = message;
+  }
   let latest;
 
   function defaults() {
@@ -263,23 +275,37 @@ function roomBooking(form, run) {
 
   function render() {
     const bookings = [...run('GET')].sort((a,b)=>Date.parse(a.start)-Date.parse(b.start));
-    list.replaceChildren(...bookings.map(({room,start,end}) => {
+    const groups = new Map();
+    for (const {room,start,end} of bookings) {
+      const from = new Date(start);
+      const until = new Date(end);
+      const day = dateFormat.format(from);
+      if (!groups.has(day)) groups.set(day,document.createElement('ul'));
       const item = document.createElement('li');
-      item.append(element('strong',room),element('span',format.formatRange(new Date(start),new Date(end))));
-      return item;
+      item.dataset.room = room;
+      const format = day === dateFormat.format(until) ? timeFormat : fullFormat;
+      item.append(element('strong',room),element('span',format.formatRange(from,until)));
+      groups.get(day).append(item);
+    }
+    list.replaceChildren(...Array.from(groups,([day,items]) => {
+      const group = document.createElement('section');
+      group.append(element('h3',day),items);
+      return group;
     }));
-    if (!bookings.length) list.append(element('li','Пока нет бронирований.'));
+    empty.hidden = bookings.length > 0;
+    reset.disabled = bookings.length === 0;
+    panel.querySelector('#booking-total').textContent = 'Всего броней: '+bookings.length;
   }
 
   function book(values) {
     const response = run(JSON.stringify(values));
     if (response.startsWith('HTTP 409')) {
-      status.textContent = 'HTTP 409 · Комната уже занята в это время.';
+      feedback('Комната уже занята в это время. Выберите другой интервал.','error');
       return;
     }
     latest = values;
     repeat.disabled = false;
-    status.textContent = 'HTTP 201 · Бронь создана.';
+    feedback('Бронь создана. Комната '+values.room+' добавлена в расписание.','success');
     render();
   }
 
@@ -289,19 +315,19 @@ function roomBooking(form, run) {
     const from = new Date(start.value);
     const until = new Date(end.value);
     if (!(until > from)) {
-      status.textContent = 'Укажите время окончания позже начала.';
+      feedback('Укажите время окончания позже начала.','error');
       return;
     }
     book({room:room.value,start:from.toISOString(),end:until.toISOString()});
   };
   repeat.onclick = () => book(latest);
-  panel.querySelector('[data-reset]').onclick = () => {
+  reset.onclick = () => {
     state = {};
     repeat.disabled = true;
     form.reset();
     defaults();
     render();
-    status.textContent = 'Расписание очищено.';
+    feedback('Расписание очищено.','info');
   };
   defaults();
   render();
