@@ -14,6 +14,34 @@
     "live": true
   },
   {
+    "name": "go-slot-merge",
+    "title": "Объединение интервалов",
+    "description": "Сортирует интервалы и объединяет пересечения и соседние отрезки.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-slot-merge",
+    "demo": "go-slot-merge/",
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-slot-merge",
+    "live": false
+  },
+  {
+    "name": "go-csv-audit",
+    "title": "Проверка CSV",
+    "description": "Проверяет заголовки CSV и показывает номера записей с неверным числом колонок.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-csv-audit",
+    "demo": "go-csv-audit/",
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-csv-audit",
+    "live": false
+  },
+  {
     "name": "repomap",
     "title": "RepoMap",
     "description": "Строит карту прямо по ссылке на GitHub: переходы сайта, HTTP-маршруты, команды и кнопки Telegram-бота.",

@@ -6,7 +6,7 @@
 <meta name="description" content="Портфолио mainstarkov. Бэкенд на Go, Telegram-боты, инструменты и веб-демо.">
 <title>mainstarkov — портфолио разработчика | Go, API, Telegram</title>
 <link rel="icon" href="hedgehog.jpg">
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site.css?v=forest-1">
 <script src="site.js?v=interactive-1" defer></script>
 </head>
 <body>
@@ -29,6 +29,10 @@
 <div class="term-body"><p class="muted">$ POST /jobs</p><p>{ "text": "hello" }</p><p class="return">↳ 202 Accepted</p><p>{ "id": 1, "status": "queued" }</p><hr><p class="muted">$ GET /jobs/1</p><p class="return">↳ 200 OK</p><p>{ "id": 1, "status": "done" }</p></div>
 </aside>
 </section>
+<picture class="forest-banner">
+ <source media="(prefers-reduced-motion: reduce)" srcset="hedgehog-mushroom-trail.png">
+ <img src="hedgehog-mushroom-trail.gif" alt="Пиксельный ёжик гуляет по ночному лесу и собирает грибы в корзинку" width="960" height="300">
+</picture>
 <section id="projects" class="section">
 <div class="section-top"><div><p class="overline">КАТАЛОГ</p><h2>Проекты</h2></div><p id="count" class="muted" aria-live="polite"></p></div>
 <div class="toolbar">

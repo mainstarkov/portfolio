@@ -103,6 +103,27 @@ add("weathernow","Moscow","Учебный прогноз. Для Москвы, �
 add("site-mirror-kit","https://example.com/","Демонстрация манифеста на учебных данных. Укажите адрес, чтобы увидеть пример структуры архива.",text=>{const url=new URL(text);need(/^https?:$/.test(url.protocol),"Нужен HTTP(S)-адрес");return {entry:url.href,files:[{url:url.href,path:"files/index.html",status:200}],snapshots:["snapshots/001.html"],preview:"http://127.0.0.1:4173"};});
 add("ridex-local","register demo","Демонстрационный сценарий аккаунта. Используйте register имя, login имя, profile или logout. Пароль вводить не нужно.",(text,state)=>{const [cmd,name]=words(text);state.accounts??=new Set();switch(cmd){case "register":need(name,"Укажите имя");need(!state.accounts.has(name),"Имя уже занято");state.accounts.add(name);state.user=name;return "Аккаунт создан. Открыт профиль: "+name;case "login":need(state.accounts.has(name),"Аккаунт не найден");state.user=name;return "Вход выполнен";case "profile":return state.user?"Профиль: "+state.user:"Сначала войдите";case "logout":state.user="";return "Вы вышли";default:throw Error("Неизвестная команда");}},{"Профиль":"profile","Выйти":"logout","Войти":"login demo"});
 
+add("go-slot-merge","[[1,3],[2,5],[8,10],[10,11]]","Введите JSON-массив пар целых чисел. Пересечения и соседние интервалы объединяются.",text=>{
+ const slots=JSON.parse(text);
+ need(Array.isArray(slots)&&slots.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isSafeInteger)&&p[0]<p[1]),"Каждый интервал должен быть парой целых чисел с началом меньше конца.");
+ const merged=[];
+ for(const [start,end] of slots.sort((a,b)=>a[0]-b[0])){
+  const last=merged.at(-1);
+  if(!last||start>last[1])merged.push([start,end]);
+  else last[1]=Math.max(last[1],end);
+ }
+ return merged;
+},{"Раздельные интервалы":"[[1,2],[4,5]]"});
+add("go-csv-audit",JSON.stringify({csv:"name,city\nAda,London\nGrace\nLinus,Helsinki,extra",required:["name","city"]},null,2),"Измените CSV или список обязательных заголовков в JSON. Демо покажет пропущенные поля и номера записей с неверным числом колонок.",text=>{
+ const value=JSON.parse(text);
+ need(typeof value?.csv==="string" && (!value.required||Array.isArray(value.required)),"Ожидается объект с csv и массивом required.");
+ const [header,...rows]=csv(value.csv);
+ need(header?.length && header.every(Boolean) && new Set(header).size===header.length,"Пустой или повторяющийся заголовок.");
+ const missing=(value.required||[]).filter(key=>!header.includes(key));
+ const wrong_width=rows.flatMap((row,i)=>row.length===header.length?[]:[i+2]);
+ return {valid:!missing.length&&!wrong_width.length,rows:rows.length,missing,wrong_width};
+},{"Исправленная таблица":JSON.stringify({csv:"name,city\nAda,London\nGrace,New York",required:["name","city"]},null,2)});
+
 const id = new URLSearchParams(location.search).get("project");
 const demo = entries.get(id);
 const form = document.querySelector("#input");
