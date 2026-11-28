@@ -22,6 +22,9 @@ API на Go, Telegram-боты и небольшие инструменты на
 | [Ссылки с TTL](projects/go/go-expiring-links) | Выдаёт короткую ссылку и перенаправляет до окончания срока | `http://127.0.0.1:8081` | [Запрос и ответ](https://mainstarkov.github.io/portfolio/go-expiring-links/) |
 | [Очередь задач](projects/go/go-job-queue) | Выполняет задачи в фоновом воркере и выдаёт результат по ID | `http://127.0.0.1:8083` | [Запрос и ответ](https://mainstarkov.github.io/portfolio/go-job-queue/) |
 | [Приём событий](projects/go/go-event-inbox) | Ведёт журнал событий, распознаёт повторы и конфликты | `http://127.0.0.1:8084` | [Запрос и ответ](https://mainstarkov.github.io/portfolio/go-event-inbox/) |
+| [Бронирование комнат](projects/go/go-room-booking) | Бронирует комнату на интервал и отклоняет пересекающиеся заявки. | `http://127.0.0.1:8085` | [Инструкция](https://mainstarkov.github.io/portfolio/go-room-booking/) |
+| [Складской учёт](projects/go/go-stock-counter) | Принимает поступления и списания товара и защищает остаток от ухода в минус. | `http://127.0.0.1:8086` | [Инструкция](https://mainstarkov.github.io/portfolio/go-stock-counter/) |
+| [Голосование](projects/go/go-choice-poll) | Принимает один голос от участника и показывает результаты по вариантам. | `http://127.0.0.1:8087` | [Инструкция](https://mainstarkov.github.io/portfolio/go-choice-poll/) |
 
 Для запуска сервиса перейдите в его папку и выполните `go run .` (Go 1.22+). Примеры `curl` находятся в README каждого сервиса.
 

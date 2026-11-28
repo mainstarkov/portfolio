@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бронирование комнат · Установка и запуск</title><style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#13141b;color:#f9f6ef}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:880px;margin:auto;padding:clamp(28px,8vw,90px) 24px}
+h1{font-size:clamp(2.5rem,8vw,5.2rem);line-height:1;letter-spacing:-.07em;overflow-wrap:anywhere;margin:16px 0 24px}
+h2{font-size:1.1rem;margin:0}.lead{max-width:63ch;color:#dad9e3;font-size:1.15rem;line-height:1.65}
+a{color:#ffbd89}.top{display:flex;gap:24px;flex-wrap:wrap}.box{padding:24px;margin-top:20px;background:#1d1f2a;border:1px solid #3c3e52;border-radius:14px}
+pre{background:#14151d;padding:15px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;color:#d6f9e9}
+ul{padding-left:1.2rem;line-height:1.9}.list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;padding:0;list-style:none}.list a{display:block;background:#1d1f2a;border:1px solid #3c3e52;padding:10px 14px;border-radius:9px}
+
+html{scroll-behavior:smooth}.os-links{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}.os-links a{border:1px solid #565870;padding:8px 13px;border-radius:99px;text-decoration:none;color:#fff7ef}.os-links a:hover,.os-links a:focus-visible{border-color:#ffbd89;color:#ffbd89}.box{scroll-margin-top:12px}.box p{line-height:1.6}.box h2{font-size:clamp(1.4rem,4vw,1.95rem);letter-spacing:-.035em}.box h3{margin-top:22px;font-size:1rem}.snippet{background:#14151d;border:1px solid #3c3e52;border-radius:10px;margin:14px 0}.snippet-head{padding:8px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #3c3e52;color:#dad9e3;font-size:.82rem}.snippet-head button{cursor:pointer;background:#292b39;color:#fff7ef;padding:6px 9px;border:1px solid #565870;border-radius:6px;font:inherit}.snippet-head button:focus-visible{outline:2px solid #ffbd89;outline-offset:2px}.snippet pre{margin:0;font-size:.88rem}.note{color:#dad9e3}.status-copy:empty{display:none}.status-copy{position:sticky;bottom:14px;width:max-content;max-width:100%;background:#222533;border:1px solid #6b6d86;border-radius:8px;padding:8px 12px}.tag{font-family:ui-monospace,monospace;color:#9ee4c5}.zip{white-space:nowrap}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<main class="wrap"><nav class="top"><a href="../">← Portfolio</a><a href="https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-room-booking">Исходники ↗</a><a href="https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip">Скачать ZIP ↓</a></nav>
+<h1>Бронирование комнат</h1><p class="lead">Бронирует комнату на интервал и отклоняет пересекающиеся заявки.</p><p><a href="https://go.dev/doc/install">Установить Go 1.22+</a> · <code>http://127.0.0.1:8085</code></p>
+<nav class="os-links" aria-label="Операционная система"><a href="#macos">macOS</a><a href="#windows">Windows</a><a href="#linux">Linux</a></nav>
+<section class="box" id="macos"><h2>macOS</h2><h3>Скачать и запустить</h3><div class="snippet"><div class="snippet-head"><span>Терминал</span></div><pre><code>git clone https://github.com/mainstarkov/portfolio.git
+cd portfolio/projects/go/go-room-booking
+go version
+go run .</code></pre></div><p>При загрузке ZIP распакуйте архив и откройте папку <code>portfolio-main/projects/go/go-room-booking</code>. Выполните <code>go run .</code>.</p><h3>Пример запроса</h3><p>Откройте второе окно терминала.</p><div class="snippet"><div class="snippet-head"><span>Терминал</span></div><pre><code>curl -i http://127.0.0.1:8085/bookings -H &#x27;Content-Type: application/json&#x27; --data &#x27;{&quot;room&quot;:&quot;Atlas&quot;,&quot;start&quot;:&quot;2026-12-01T10:00:00Z&quot;,&quot;end&quot;:&quot;2026-12-01T11:00:00Z&quot;}&#x27;
+curl -sS http://127.0.0.1:8085/bookings</code></pre></div></section><section class="box" id="windows"><h2>Windows</h2><h3>Скачать и запустить</h3><div class="snippet"><div class="snippet-head"><span>PowerShell</span></div><pre><code>git clone https://github.com/mainstarkov/portfolio.git
+Set-Location .\portfolio\projects\go\go-room-booking
+go version
+go run .</code></pre></div><p>При загрузке ZIP распакуйте архив и откройте папку <code>portfolio-main/projects/go/go-room-booking</code>. Выполните <code>go run .</code>.</p><h3>Пример запроса</h3><p>Откройте второе окно терминала.</p><div class="snippet"><div class="snippet-head"><span>PowerShell</span></div><pre><code>Invoke-RestMethod -Method Post -Uri &#x27;http://127.0.0.1:8085/bookings&#x27; -ContentType &#x27;application/json&#x27; -Body &#x27;{&quot;room&quot;:&quot;Atlas&quot;,&quot;start&quot;:&quot;2026-12-01T10:00:00Z&quot;,&quot;end&quot;:&quot;2026-12-01T11:00:00Z&quot;}&#x27;
+Invoke-RestMethod -Uri &#x27;http://127.0.0.1:8085/bookings&#x27;</code></pre></div></section><section class="box" id="linux"><h2>Linux</h2><h3>Скачать и запустить</h3><div class="snippet"><div class="snippet-head"><span>Терминал</span></div><pre><code>git clone https://github.com/mainstarkov/portfolio.git
+cd portfolio/projects/go/go-room-booking
+go version
+go run .</code></pre></div><p>При загрузке ZIP распакуйте архив и откройте папку <code>portfolio-main/projects/go/go-room-booking</code>. Выполните <code>go run .</code>.</p><h3>Пример запроса</h3><p>Откройте второе окно терминала.</p><div class="snippet"><div class="snippet-head"><span>Терминал</span></div><pre><code>curl -i http://127.0.0.1:8085/bookings -H &#x27;Content-Type: application/json&#x27; --data &#x27;{&quot;room&quot;:&quot;Atlas&quot;,&quot;start&quot;:&quot;2026-12-01T10:00:00Z&quot;,&quot;end&quot;:&quot;2026-12-01T11:00:00Z&quot;}&#x27;
+curl -sS http://127.0.0.1:8085/bookings</code></pre></div></section><section class="box"><h2>Что должно получиться</h2><p>Поля start и end принимают RFC 3339. Соседние интервалы допустимы. Повторное бронирование пересекающегося интервала возвращает 409.</p><p>Данные очищаются при остановке сервера. <code>GET /healthz</code> возвращает <code>ok</code>.</p></section>
+<p class="status-copy" role="status" id="copy-status"></p></main><script>
+const statusBox = document.querySelector("#copy-status");
+if (navigator.clipboard) {
+    let hideStatus;
+    for (const snippet of document.querySelectorAll(".snippet")) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "Копировать";
+        button.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(snippet.querySelector("code").textContent);
+                statusBox.textContent = "Команды скопированы.";
+            } catch {
+                statusBox.textContent = "Выдели и скопируй команды вручную.";
+            }
+            clearTimeout(hideStatus);
+            hideStatus = setTimeout(() => { statusBox.textContent = ""; }, 2400);
+        });
+        snippet.querySelector(".snippet-head").append(button);
+    }
+}
+</script></html>

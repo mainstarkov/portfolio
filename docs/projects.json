@@ -12,6 +12,45 @@
     "live": false
   },
   {
+    "name": "go-room-booking",
+    "title": "Бронирование комнат",
+    "description": "Бронирует комнату на интервал и отклоняет пересекающиеся заявки.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-room-booking",
+    "demo": "go-room-booking/",
+    "live": false
+  },
+  {
+    "name": "go-stock-counter",
+    "title": "Складской учёт",
+    "description": "Принимает поступления и списания товара и защищает остаток от ухода в минус.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-stock-counter",
+    "demo": "go-stock-counter/",
+    "live": false
+  },
+  {
+    "name": "go-choice-poll",
+    "title": "Голосование",
+    "description": "Принимает один голос от участника и показывает результаты по вариантам.",
+    "stack": "Go / Бэкенд",
+    "filters": [
+      "go",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-choice-poll",
+    "demo": "go-choice-poll/",
+    "live": false
+  },
+  {
     "name": "go-expiring-links",
     "title": "Ссылки с TTL",
     "description": "HTTP API для временных ссылок и перенаправлений.",
