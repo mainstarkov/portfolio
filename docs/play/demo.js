@@ -54,7 +54,51 @@ add("passforge","24","Введите длину от 8 до 128. Демо ген
 add("taskflow","add Проверить README","Команды: add описание, list, done ID, remove ID.",(text,state)=>{state.tasks??=[];state.next??=1;const [cmd,...parts]=words(text);if(cmd==="add"){need(parts.length,"Добавьте описание");state.tasks.push({id:state.next++,title:parts.join(" "),done:false});}else if(cmd==="done"||cmd==="remove"){const id=Number(parts[0]);const item=state.tasks.find(t=>t.id===id);need(item,"Нет задачи с таким ID");if(cmd==="done")item.done=true;else state.tasks=state.tasks.filter(t=>t!==item);}else need(cmd==="list","Неизвестная команда");return state.tasks.map(t=>`${t.done?"✔":"○"} #${t.id} ${t.title}`).join("\n")||"Список пуст";},{"Список":"list","Завершить первую":"done 1"});
 add("tidybox","photo.jpg\nreport.pdf\narchive.zip\nnotes.txt","Напишите имена файлов. Демо покажет план перемещения без доступа к диску.",text=>lines(text).map(f=>{const x=f.split(".").pop().toLowerCase();const kind=/^(png|jpg|jpeg|webp|gif)$/.test(x)?"Images":/^(pdf|doc|docx|txt)$/.test(x)?"Documents":/^(zip|rar|gz)$/.test(x)?"Archives":"Other";return f+" → "+kind+"/"+f;}).join("\n"));
 add("uptime-check","https://example.com\nhttps://example.net","Тестовые HTTP-ответы. Добавьте URL, чтобы проверить формат отчёта.",text=>lines(text).map(x=>{const url=new URL(x);return {url:url.href,status:url.hostname==="example.com"?200:503,ms:url.hostname==="example.com"?24:85,simulated:true};}));
-add("netscout","example.org","Учебная сводка по домену или IP с тестовыми DNS и HTTPS-данными.",text=>{const target=text.trim();need(/^[\w.-]+$/.test(target),"Введите домен или IPv4");return {target,addresses:["192.0.2.10"],https:"200 OK",certificate:"Демонстрационные данные"};});
+function dnsTarget(text) {
+ const input = text.trim();
+ const ipv4 = input.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+ if (ipv4) {
+  const octets = ipv4.slice(1).map(Number);
+  need(octets.every(n => n <= 255), "Некорректный IPv4.");
+  return { label: octets.join("."), name: octets.reverse().join(".") + ".in-addr.arpa", types:["PTR"] };
+ }
+ if (input.includes(":") && !input.includes("://")) {
+  const canonical = new URL("http://[" + input.replace(/^\[|\]$/g,"") + "]").hostname.slice(1,-1);
+  const [left, right] = canonical.split("::");
+  const head = left.split(":").filter(Boolean), tail = (right || "").split(":").filter(Boolean);
+  const groups = right === undefined ? head : [...head,...Array(8-head.length-tail.length).fill("0"),...tail];
+  return {label:canonical,name:[...groups.map(x=>x.padStart(4,"0")).join("")].reverse().join(".")+".ip6.arpa",types:["PTR"]};
+ }
+ need(input && !/[\s@?#/\\%]/.test(input), "Введите домен или IP без пути, порта и параметров.");
+ const name = new URL("https://" + input).hostname.replace(/\.$/,"").toLowerCase();
+ need(name.length <= 253 && name.includes(".") && /^[a-z]/.test(name.split(".").at(-1)) &&
+  name.split(".").every(label => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label)),
+  "Введите корректный домен, например mos.ru.");
+ return {label:name,name,types:["A","AAAA","MX","NS","TXT","CAA"]};
+}
+async function lookupDNS(text) {
+ const {label,name,types} = dnsTarget(text);
+ const groups = await Promise.allSettled(types.map(async type => {
+  const url = new URL("https://dns.google/resolve");
+  url.search = new URLSearchParams({name,type});
+  const response = await fetch(url,{credentials:"omit",signal:AbortSignal.timeout(8000)});
+  if (!response.ok) throw Error("DNS API вернул HTTP " + response.status);
+  return response.json();
+ }));
+ if (groups.every(result=>result.status==="rejected")) throw Error("DNS-сервис недоступен. Повторите запрос позже.");
+ const codes = {1:"A",5:"CNAME",12:"PTR",15:"MX",16:"TXT",28:"AAAA",2:"NS",257:"CAA"};
+ const sections = types.map((type,index)=>{
+  const group=groups[index];
+  if(group.status==="rejected") return type+" · запрос не выполнен";
+  const answer=group.value;
+  if(answer.Status===3) return type+" · имя не найдено (NXDOMAIN)";
+  if(answer.Status!==0) return type+" · ошибка DNS (код "+answer.Status+")";
+  if(!answer.Answer?.length)return type+" · записей нет";
+  return type+"\n"+answer.Answer.map(row=>"  "+(codes[row.type]||row.type)+"  "+row.data+"  (TTL "+row.TTL+" с)").join("\n");
+ });
+ return label+" · DNS\nИсточник: Google Public DNS\n\n"+sections.join("\n\n");
+}
+add("netscout","mos.ru","Введите домен, IPv4 или IPv6. Показывает фактические DNS-записи или обратный PTR.",lookupDNS,{"Домен":"mos.ru","Обратный DNS":"8.8.8.8"});
 add("weathernow","Moscow","Учебный прогноз. Для Москвы, Лондона и Токио есть разные тестовые данные.",text=>{const data={moscow:[-3,"облачно"],london:[8,"дождь"],tokyo:[14,"ясно"]};const weather=data[text.trim().toLowerCase()];need(weather,"Попробуйте Moscow, London или Tokyo");return `${text.trim()} · ${weather[0]} °C · ${weather[1]}\n`+Array.from({length:5},(_,i)=>`День ${i+1}: ${weather[0]+(i%3)} °C`).join("\n");});
 add("site-mirror-kit","https://example.com/","Демонстрация манифеста на учебных данных. Укажите адрес, чтобы увидеть пример структуры архива.",text=>{const url=new URL(text);need(/^https?:$/.test(url.protocol),"Нужен HTTP(S)-адрес");return {entry:url.href,files:[{url:url.href,path:"files/index.html",status:200}],snapshots:["snapshots/001.html"],preview:"http://127.0.0.1:4173"};});
 add("ridex-local","register demo","Демонстрационный сценарий аккаунта. Используйте register имя, login имя, profile или logout. Пароль вводить не нужно.",(text,state)=>{const [cmd,name]=words(text);state.accounts??=new Set();switch(cmd){case "register":need(name,"Укажите имя");need(!state.accounts.has(name),"Имя уже занято");state.accounts.add(name);state.user=name;return "Аккаунт создан. Открыт профиль: "+name;case "login":need(state.accounts.has(name),"Аккаунт не найден");state.user=name;return "Вход выполнен";case "profile":return state.user?"Профиль: "+state.user:"Сначала войдите";case "logout":state.user="";return "Вы вышли";default:throw Error("Неизвестная команда");}},{"Профиль":"profile","Выйти":"logout","Войти":"login demo"});
@@ -69,7 +113,7 @@ let state = {};
 function show(value){result.textContent = typeof value==="string"?value:JSON.stringify(value,null,2);}
 if(demo){
  field.value=demo.input;
- document.querySelector("#hint").textContent=demo.hint+" Действия выполняются в браузерном демо.";
+ document.querySelector("#hint").textContent=demo.hint+(id==="netscout"?" Введённый адрес передаётся Google Public DNS.":" Действия выполняются в браузерном демо.");
  document.querySelector("#title").textContent=id;
  for(const [label,value] of Object.entries(demo.actions)){
   const button=document.createElement("button");

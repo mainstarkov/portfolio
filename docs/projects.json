@@ -274,7 +274,7 @@
   {
     "name": "netscout",
     "title": "netscout",
-    "description": "Domain & IP reconnaissance CLI tool — DNS lookup, reverse DNS, geolocation with Google Maps link",
+    "description": "DNS и обратный поиск по IP. Веб-версия показывает реальные записи, дополнительные проверки доступны в CLI.",
     "stack": "Python",
     "filters": [
       "python"
