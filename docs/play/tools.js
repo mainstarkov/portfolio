@@ -1,6 +1,8 @@
 import {entries} from './demo.js';
 
 const tools = {
+  'go-room-booking': ['Бронирование комнат','Выберите комнату и время. Если бронь пересекается с другой, демо покажет конфликт.','../go-room-booking/'],
+  'go-choice-poll': ['Голосование за язык','Выберите Go, Python или Rust. Результаты обновляются сразу после голосования.','../go-choice-poll/'],
   'go-event-inbox': ['Go Event Inbox','Отправьте событие, затем попробуйте повторить его или использовать тот же ID для другого типа.','../go-event-inbox/'],
   'go-job-queue': ['Go Job Queue','Отправьте текст и проследите, как задача из очереди получает результат SHA-256.','../go-job-queue/'],
   'go-stock-counter': ['Складской учёт','Пополните остаток товара или попробуйте списать больше, чем есть на складе.','../go-stock-counter/'],
@@ -241,7 +243,124 @@ function jobQueue(form, run) {
   };
 }
 
+function roomBooking(form, run) {
+  const list = panel.querySelector('#bookings');
+  const repeat = panel.querySelector('[data-example]');
+  const format = new Intl.DateTimeFormat('ru', {dateStyle:'medium',timeStyle:'short'});
+  let latest;
+
+  function defaults() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate()+1);
+    const date = [
+      tomorrow.getFullYear(),
+      String(tomorrow.getMonth()+1).padStart(2,'0'),
+      String(tomorrow.getDate()).padStart(2,'0')
+    ].join('-');
+    form.elements.start.value = date+'T10:00';
+    form.elements.end.value = date+'T11:00';
+  }
+
+  function render() {
+    const bookings = [...run('GET')].sort((a,b)=>Date.parse(a.start)-Date.parse(b.start));
+    list.replaceChildren(...bookings.map(({room,start,end}) => {
+      const item = document.createElement('li');
+      item.append(element('strong',room),element('span',format.formatRange(new Date(start),new Date(end))));
+      return item;
+    }));
+    if (!bookings.length) list.append(element('li','Пока нет бронирований.'));
+  }
+
+  function book(values) {
+    const response = run(JSON.stringify(values));
+    if (response.startsWith('HTTP 409')) {
+      status.textContent = 'HTTP 409 · Комната уже занята в это время.';
+      return;
+    }
+    latest = values;
+    repeat.disabled = false;
+    status.textContent = 'HTTP 201 · Бронь создана.';
+    render();
+  }
+
+  form.onsubmit = event => {
+    event.preventDefault();
+    const {room,start,end} = form.elements;
+    const from = new Date(start.value);
+    const until = new Date(end.value);
+    if (!(until > from)) {
+      status.textContent = 'Укажите время окончания позже начала.';
+      return;
+    }
+    book({room:room.value,start:from.toISOString(),end:until.toISOString()});
+  };
+  repeat.onclick = () => book(latest);
+  panel.querySelector('[data-reset]').onclick = () => {
+    state = {};
+    repeat.disabled = true;
+    form.reset();
+    defaults();
+    render();
+    status.textContent = 'Расписание очищено.';
+  };
+  defaults();
+  render();
+}
+
+function choicePoll(form, run) {
+  const list = panel.querySelector('#vote-results');
+  const field = form.elements.voter;
+  let participant = 1;
+
+  function render() {
+    const results = Object.entries(run('GET'));
+    const total = results.reduce((sum,[,count])=>sum+count,0);
+    panel.querySelector('#vote-total').textContent = 'Всего голосов: '+total;
+    list.replaceChildren(...results.map(([option,count]) => {
+      const item = document.createElement('li');
+      const percent = total ? Math.round(count/total*100) : 0;
+      const bar = document.createElement('meter');
+      bar.max = total || 1;
+      bar.value = count;
+      bar.setAttribute('aria-label','Доля голосов за '+option);
+      item.append(element('strong',option),element('span',count+' · '+percent+'%'),bar);
+      return item;
+    }));
+  }
+  form.onsubmit = event => {
+    event.preventDefault();
+    const voter = field.value.trim();
+    if (!voter) {
+      status.textContent = 'Введите ID участника.';
+      return;
+    }
+    const option = event.submitter?.value;
+    if (!option) return;
+    const response = run(JSON.stringify({voter,option}));
+    status.textContent = response.startsWith('HTTP 201') ?
+      'HTTP 201 · Голос за '+option+' принят.' :
+      'HTTP 409 · Этот участник уже голосовал.';
+    render();
+  };
+  panel.querySelector('[data-example]').onclick = () => {
+    do {
+      field.value = 'demo-'+ ++participant;
+    } while (state.votes?.has(field.value));
+    field.focus();
+    status.textContent = 'Можно голосовать от нового участника.';
+  };
+  panel.querySelector('[data-reset]').onclick = () => {
+    state = {};
+    participant = 1;
+    form.reset();
+    render();
+    status.textContent = 'Голоса сброшены.';
+  };
+  render();
+}
+
 const screens = {
+  'go-room-booking': roomBooking, 'go-choice-poll': choicePoll,
   'go-event-inbox': eventInbox, 'go-job-queue': jobQueue,
   'go-stock-counter': stock, taskflow: tasks, 'rs-palette-contrast': contrast, 'node-query-card': query
 };

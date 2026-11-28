@@ -17,6 +17,30 @@
 <p id="status" role="status"></p>
 </main>
 
+<template id="go-room-booking">
+<form>
+  <div class="fields booking-fields">
+    <label>Комната <select name="room"><option>Atlas</option><option>Orion</option><option>Vega</option></select></label>
+    <label>Начало <input name="start" type="datetime-local" required></label>
+    <label>Конец <input name="end" type="datetime-local" required></label>
+  </div>
+  <div class="actions"><button>Забронировать</button><button type="button" data-example disabled>Повторить последнюю бронь</button><button type="button" data-reset>Сбросить</button></div>
+</form>
+<p class="demo-note">Время указано по часам вашего устройства. Брони хранятся до перезагрузки страницы.</p>
+<section class="result"><h2>Расписание</h2><ul id="bookings" class="rows"></ul></section>
+</template>
+
+<template id="go-choice-poll">
+<form>
+  <label for="voter">ID участника</label>
+  <input id="voter" name="voter" value="demo-1" required maxlength="64">
+  <div class="actions" aria-label="Язык для голосования" role="group"><button name="option" value="Go">Голос за Go</button><button name="option" value="Python">Голос за Python</button><button name="option" value="Rust">Голос за Rust</button></div>
+  <div class="actions"><button type="button" data-example>Новый участник</button><button type="button" data-reset>Сбросить голоса</button></div>
+</form>
+<p class="demo-note">У каждого ID один голос. Результаты хранятся до перезагрузки страницы.</p>
+<section class="result"><h2>Результаты</h2><p id="vote-total"></p><ul id="vote-results" class="rows"></ul></section>
+</template>
+
 <template id="go-event-inbox">
 <form>
   <div class="fields">
