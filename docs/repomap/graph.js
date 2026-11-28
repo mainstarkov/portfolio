@@ -30,6 +30,7 @@ function createRepoGraph() {
     <button type="button" id="diagram-collapse" disabled>Свернуть ветки</button>
    </div>
    <button type="button" id="diagram-check-all" hidden disabled>Проверить все</button>
+   <button type="button" id="diagram-check-stop" hidden>Остановить</button>
    <span id="diagram-check-status" role="status"></span>
    <button type="button" id="diagram-top">↑ К началу схемы</button>
   </div>
@@ -75,6 +76,7 @@ function createRepoGraph() {
  const collapseBranches = section.querySelector("#diagram-collapse");
  const disclosureTools = section.querySelector(".diagram-disclosure-tools");
  const checkAll = section.querySelector("#diagram-check-all");
+ const checkStop = section.querySelector("#diagram-check-stop");
  const checkStatus = section.querySelector("#diagram-check-status");
  const loadBranches = new WeakMap();
  let batchRun;
@@ -103,33 +105,43 @@ function createRepoGraph() {
   allBranches.setAttribute("aria-pressed", "true");
   canvas.fit();
  });
+ function reportBatch(run, prefix) {
+  const checked = run.loaded + run.failed;
+  checkStatus.textContent = `${prefix} Проверено: ${checked} · Загружено: ${run.loaded} · Недоступно: ${run.failed}.`;
+ }
+ checkStop.addEventListener("click", () => {
+  if (!batchRun) return;
+  checkStop.disabled = true;
+  batchRun.controller.abort();
+  reportBatch(batchRun,"Останавливаю…");
+ });
  checkAll.addEventListener("click", async () => {
-  const run = {attempted:new Set(),loaded:0,failed:0};
-  const limit = 24, parallel = 4;
+  const run = {attempted:new Set(),loaded:0,failed:0,controller:new AbortController()};
+  const signal = run.controller.signal;
   batchRun = run;
-  checkAll.disabled = true;
-  collapseBranches.disabled = true;
-  checkStatus.textContent = "Проверяю страницы…";
-  while (batchRun === run && run.attempted.size < limit) {
+  checkStop.hidden = checkStop.disabled = false;
+  updateDisclosures();
+  reportBatch(run,"Проверяю страницы…");
+  while (batchRun === run && !signal.aborted) {
    expandKnownBranches();
    const batch = [...content.querySelectorAll(unreadToggle)]
     .filter(button => !run.attempted.has(button))
-    .slice(0,Math.min(parallel,limit-run.attempted.size));
+    .slice(0,4);
    if (!batch.length) break;
    for (const button of batch) run.attempted.add(button);
-   const results = await Promise.all(batch.map(button => loadBranches.get(button)()));
-   if (batchRun !== run) return;
-   run.loaded += results.filter(Boolean).length;
-   run.failed += results.filter(result=>!result).length;
-   checkStatus.textContent = `Проверяю страницы… Готово: ${run.attempted.size}.`;
+   await Promise.all(batch.map(async button => {
+    const result = await loadBranches.get(button)(signal);
+    if (batchRun !== run || result === undefined) return;
+    if (result) run.loaded++;
+    else run.failed++;
+    reportBatch(run,signal.aborted ? "Останавливаю…" : "Проверяю страницы…");
+   }));
   }
   if (batchRun !== run) return;
   batchRun = undefined;
-  expandKnownBranches();
-  const left = [...content.querySelectorAll(unreadToggle)].some(button => !run.attempted.has(button));
-  checkStatus.textContent = `Загружено: ${run.loaded}.` +
-   (run.failed ? ` Недоступно: ${run.failed}.` : "") +
-   (left ? " Остались непроверенные страницы. Нажмите ещё раз, чтобы продолжить." : "");
+  checkStop.hidden = true;
+  if (!signal.aborted) expandKnownBranches();
+  reportBatch(run,signal.aborted ? "Обход остановлен." : "Обход завершён.");
   updateDisclosures();
  });
  collapseBranches.addEventListener("click", () => {
@@ -302,17 +314,17 @@ function createRepoGraph() {
   let remaining = website ? 300 : 160;
   function unreadPage(page, details, ancestors) {
    let item, pendingLoad;
-   function begin(output) {
-    if (!pendingLoad) pendingLoad = load(output).finally(() => { pendingLoad = undefined; });
+   function begin(output, signal) {
+    if (!pendingLoad) pendingLoad = load(output,signal).finally(() => { pendingLoad = undefined; });
     return pendingLoad;
    }
-   async function load(output) {
+   async function load(output, signal) {
     const pending = node("Загружаю ссылки…", "value");
     pending.setAttribute("role","status");
     output.replaceChildren(pending);
     output.setAttribute("aria-busy","true");
     try {
-     const result = await website.loadPage(details.url);
+     const result = await website.loadPage(details.url,signal);
      if (!item.isConnected) return;
      const nextAncestors = new Set([...ancestors,page,result.actual]);
      let children;
@@ -332,6 +344,12 @@ function createRepoGraph() {
      return true;
     } catch (error) {
      if (!item.isConnected) return;
+     if (signal?.aborted) {
+      output.replaceChildren();
+      output.hidden = true;
+      button.setAttribute("aria-expanded","false");
+      return;
+     }
      const failure = node(error.message || "Не удалось прочитать страницу.","value");
      failure.setAttribute("role","status");
      const retry = el("button","Повторить");
@@ -351,10 +369,11 @@ function createRepoGraph() {
    });
    const button = item.querySelector(".diagram-toggle");
    unreadInTree.add(button);
-   loadBranches.set(button, () => {
+   loadBranches.set(button, signal => {
     const output = item.lastElementChild;
-    if (output.hidden) button.click();
-    return begin(output);
+    output.hidden = false;
+    button.setAttribute("aria-expanded","true");
+    return begin(output,signal);
    });
    return item;
   }
@@ -479,7 +498,9 @@ function createRepoGraph() {
    const groups = overview();
    if (groups.length) tree.append(node(data.repo,"root",groups));
   }
+  batchRun?.controller.abort();
   batchRun = undefined;
+  checkStop.hidden = true;
   checkStatus.textContent = "";
   checkAll.hidden = !data.website || conditions;
   content.replaceChildren(tree.childElementCount ? tree : el("p", conditions ? "В поддерживаемых исходниках условия не найдены." : "Связей для схемы не найдено."));

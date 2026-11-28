@@ -191,10 +191,12 @@ async function buildRepository(input) {
   + (failed ? ` Не удалось прочитать файлов: ${failed}.` : "");
 }
 
-async function readWebsitePage(url, origin) {
+async function readWebsitePage(url, origin, stopSignal) {
+ const timeout = AbortSignal.timeout(6500);
+ const signal = stopSignal ? AbortSignal.any([stopSignal,timeout]) : timeout;
  let response;
  try {
-  response = await fetch(url, {credentials:"omit",signal:AbortSignal.timeout(6500),referrerPolicy:"no-referrer"});
+  response = await fetch(url, {credentials:"omit",signal,referrerPolicy:"no-referrer"});
  } catch {
   throw new Error("HTML недоступен. Сайт может запрещать чтение из других доменов.");
  }
@@ -310,8 +312,9 @@ async function buildWebsite(url) {
  }
  const mapped = mapLinks(edges);
 
- async function loadPage(address) {
-  const {page,links} = await readWebsitePage(address,origin);
+ async function loadPage(address, signal) {
+  const {page,links} = await readWebsitePage(address,origin,signal);
+  signal?.throwIfAborted();
   const actual = path(page);
   const requested = path(new URL(address));
   if (requested !== actual) redirects.set(requested,actual);
