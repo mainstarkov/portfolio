@@ -1,6 +1,8 @@
 import {entries} from './demo.js';
 
 const tools = {
+  'go-event-inbox': ['Go Event Inbox','Отправьте событие, затем попробуйте повторить его или использовать тот же ID для другого типа.','../go-event-inbox/'],
+  'go-job-queue': ['Go Job Queue','Отправьте текст и проследите, как задача из очереди получает результат SHA-256.','../go-job-queue/'],
   'go-stock-counter': ['Складской учёт','Пополните остаток товара или попробуйте списать больше, чем есть на складе.','../go-stock-counter/'],
   taskflow: ['Taskflow','Добавляйте задачи, отмечайте выполненные и следите за прогрессом прямо в браузере.','https://mainstarkov.github.io/taskflow/'],
   'rs-palette-contrast': ['Контраст цветов','Подберите цвет текста и фона и сразу посмотрите, как они выглядят вместе.','../rs-palette-contrast/'],
@@ -156,7 +158,91 @@ function query(form, run) {
   render();
 }
 
+function historyRow(list, title, value) {
+  panel.querySelector('[data-empty]').hidden = true;
+  const row = document.createElement('li');
+  row.append(element('strong',title),element('p',value));
+  list.prepend(row);
+  return row;
+}
+
+function eventInbox(form, run) {
+  const list = panel.querySelector('#events');
+  const repeat = panel.querySelector('[data-repeat]');
+  const conflict = panel.querySelector('[data-conflict]');
+  let lastAccepted;
+  const encoder = new TextEncoder();
+
+  function send(id, type) {
+    if ([id,type].some(value => !value || encoder.encode(value).length > 128)) {
+      status.textContent = 'Введите ID и тип события длиной от 1 до 128 байт.';
+      return;
+    }
+    const response = run(JSON.stringify({id,type}));
+    const [code] = response.match(/^HTTP [0-9]{3}/);
+    const description = {
+      'HTTP 201': 'Событие принято',
+      'HTTP 200': 'Повтор принят без создания новой записи',
+      'HTTP 409': 'Конфликт: этот ID уже связан с другим типом'
+    }[code];
+    historyRow(list,code+' · '+description,id+' · '+type);
+    status.textContent = description+'.';
+    if (code === 'HTTP 201') {
+      lastAccepted = {id,type};
+      repeat.disabled = conflict.disabled = false;
+    }
+  }
+  form.onsubmit = event => {
+    event.preventDefault();
+    send(form.elements.eventId.value.trim(),form.elements.eventType.value.trim());
+  };
+  repeat.onclick = () => send(lastAccepted.id,lastAccepted.type);
+  conflict.onclick = () => send(lastAccepted.id,
+    lastAccepted.type === 'order.cancelled' ? 'order.created' : 'order.cancelled');
+}
+
+function jobQueue(form, run) {
+  const list = panel.querySelector('#jobs');
+  let pending = Promise.resolve();
+  form.onsubmit = event => {
+    event.preventDefault();
+    const field = form.elements.jobText;
+    const text = field.value;
+    if (!text.trim()) {
+      status.textContent = 'Введите текст задачи.';
+      return;
+    }
+    const row = historyRow(list,'Отправка…',text);
+    const heading = row.querySelector('strong');
+    pending = pending.then(async () => {
+      const response = await run(JSON.stringify({text}));
+      const {id} = JSON.parse(response.split('\n')[1]);
+      heading.textContent = `#${id} · HTTP 202 · В очереди`;
+      status.textContent = `Задача #${id} в очереди.`;
+      // Keep the accepted state visible before retrieving the result.
+      setTimeout(async () => {
+        try {
+          const {sha256} = await run(String(id));
+          if (!sha256) throw new Error('Result unavailable');
+          heading.textContent = `#${id} · HTTP 200 · Готово`;
+          const output = element('p','SHA-256 ');
+          output.append(element('code',sha256));
+          row.append(output);
+          status.textContent = `Задача #${id} выполнена.`;
+        } catch {
+          heading.textContent = `#${id} · Результат недоступен`;
+          status.textContent = 'Не удалось получить результат задачи.';
+        }
+      },1000);
+    }).catch(() => {
+      heading.textContent = 'Не удалось обработать задачу';
+      status.textContent = 'Попробуйте отправить задачу ещё раз.';
+    });
+  };
+}
+
 const screens = {
+  'go-event-inbox': eventInbox, 'go-job-queue': jobQueue,
   'go-stock-counter': stock, taskflow: tasks, 'rs-palette-contrast': contrast, 'node-query-card': query
 };
 if (Object.hasOwn(tools,id)) {

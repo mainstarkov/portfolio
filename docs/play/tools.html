@@ -17,6 +17,27 @@
 <p id="status" role="status"></p>
 </main>
 
+<template id="go-event-inbox">
+<form>
+  <div class="fields">
+    <label>ID события <input name="eventId" value="order-101" required maxlength="128"></label>
+    <label>Тип события <input name="eventType" value="order.created" required maxlength="128"></label>
+  </div>
+  <div class="actions"><button>Отправить событие</button><button type="button" data-repeat disabled>Повторить последнее</button><button type="button" data-conflict disabled>Попробовать конфликт</button></div>
+</form>
+<p class="demo-note">Браузерное демо · имитация ответов API.</p>
+<section class="result"><h2>История отправок</h2><p data-empty>Отправьте первое событие, чтобы увидеть ответ.</p><ul id="events" class="rows history"></ul></section>
+</template>
+
+<template id="go-job-queue">
+<form>
+  <label for="job-text">Текст задачи</label>
+  <div class="search-row"><input id="job-text" name="jobText" value="hello" required maxlength="1000"><button>Отправить задачу</button></div>
+</form>
+<p class="demo-note">Браузерное демо · SHA-256 вычисляется на устройстве. Пауза помогает увидеть очередь.</p>
+<section class="result"><h2>История задач</h2><p data-empty>Отправьте первую задачу, чтобы получить её результат.</p><ul id="jobs" class="rows history"></ul></section>
+</template>
+
 <template id="go-stock-counter">
 <form>
   <div class="fields">
