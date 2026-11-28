@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WeatherNow — погода и прогноз</title>
+<link rel="stylesheet" href="weather.css">
+<script src="weather.js" defer></script>
+</head>
+<body>
+<main>
+<nav><a href="../">← Портфолио</a><a href="https://mainstarkov.github.io/weathernow/">Скачать и запустить ↗</a></nav>
+<h1>WeatherNow</h1>
+<p class="intro">Погода сейчас и прогноз на пять дней для вашего города.</p>
+<form id="search">
+  <label for="city">Город</label>
+  <div class="search-row"><input id="city" name="city" type="search" placeholder="Например, Москва" required minlength="2" maxlength="100"><button>Найти</button></div>
+</form>
+<div id="examples" aria-label="Примеры городов"><button type="button">Москва</button><button type="button">Лондон</button><button type="button">Токио</button></div>
+<p id="status" role="status"></p>
+<section id="matches" hidden aria-label="Результаты поиска">
+  <h2>Выберите город</h2><ul></ul>
+</section>
+<section id="forecast" hidden aria-label="Прогноз погоды">
+  <div class="current"><h2 id="place"></h2><p id="observed"></p><strong id="temperature"></strong><p id="conditions"></p><p id="details"></p></div>
+  <h2>Прогноз на пять дней</h2>
+  <ul id="days"></ul>
+</section>
+<footer>Источник прогноза и поиска городов — <a href="https://open-meteo.com/">Open-Meteo</a>.</footer>
+</main>
+</body>
+</html>

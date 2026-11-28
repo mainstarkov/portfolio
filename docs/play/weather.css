@@ -1,0 +1,29 @@
+*{box-sizing:border-box}
+body{margin:0;background:#eaf4f9;color:#172f42;font:1rem/1.5 system-ui,sans-serif}
+main{width:min(880px,100% - 32px);margin:0 auto;padding:32px 0}
+nav,.search-row,#examples{display:flex;flex-wrap:wrap;gap:10px}
+nav{justify-content:space-between}
+a{color:#155578;text-underline-offset:3px}
+h1{font-size:clamp(2.7rem,9vw,5.5rem);line-height:1.06;letter-spacing:-.055em;margin:32px 0 8px}
+h2{font-size:1.3rem;margin:0 0 8px}
+.intro,footer,#observed{color:#435e71}
+form label{display:block;font-weight:700;margin-bottom:5px}
+input,button{font:inherit;border-radius:10px;border:1px solid #7899ad;padding:9px 14px}
+input{flex:1;min-width:0;background:#fff;color:inherit}
+button{cursor:pointer;color:#15425d;background:#fff}
+form button{background:#135783;color:white;border-color:#135783;font-weight:700}
+:focus-visible{outline:3px solid #4779a0;outline-offset:3px}
+#examples{margin-top:10px}
+#examples button{padding:5px 12px}
+#status{min-height:1.5em}
+.current{border-radius:18px;background:#164662;color:white;padding:22px;margin-bottom:24px}
+.current p{margin:4px 0}
+#observed{color:#dcebf5}
+#temperature{font-size:clamp(2.6rem,8vw,4.2rem);line-height:1.1}
+ul{list-style:none;margin:0;padding:0}
+#matches li+li{margin-top:7px}
+#matches button{text-align:left}
+#days{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px}
+#days li{background:#fff;border:1px solid #c0d6e4;border-radius:14px;padding:12px}
+#days li strong,#days li span{display:block}
+footer{margin-top:26px;font-size:.9rem}
