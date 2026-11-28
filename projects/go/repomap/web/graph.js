@@ -29,6 +29,8 @@ function createRepoGraph() {
     <button type="button" id="diagram-all" aria-pressed="false">Все ветки</button>
     <button type="button" id="diagram-collapse" disabled>Свернуть ветки</button>
    </div>
+   <button type="button" id="diagram-check-all" hidden disabled>Проверить все</button>
+   <span id="diagram-check-status" role="status"></span>
    <button type="button" id="diagram-top">↑ К началу схемы</button>
   </div>
   <div class="diagram-workspace">
@@ -72,24 +74,63 @@ function createRepoGraph() {
  const allBranches = section.querySelector("#diagram-all");
  const collapseBranches = section.querySelector("#diagram-collapse");
  const disclosureTools = section.querySelector(".diagram-disclosure-tools");
+ const checkAll = section.querySelector("#diagram-check-all");
+ const checkStatus = section.querySelector("#diagram-check-status");
+ const loadBranches = new WeakMap();
+ let batchRun;
+ let unreadInTree = new Set();
+ const unreadToggle = '.diagram-card[data-type="unread-page"] .diagram-toggle';
  const branchToggle = '.diagram-card:is([data-type="button"],[data-type="page"]) .diagram-toggle';
  const openToggle = '.diagram-toggle[aria-expanded="true"]';
  function visibleExpanded() {
   return [...content.querySelectorAll(openToggle)].some(button => !button.closest("[hidden]"));
  }
  function updateDisclosures() {
-  collapseBranches.disabled = !visibleExpanded();
+  collapseBranches.disabled = Boolean(batchRun) || !visibleExpanded();
   const closed = content.querySelector(branchToggle + '[aria-expanded="false"]');
   if (closed) allBranches.setAttribute("aria-pressed", "false");
+  checkAll.disabled = Boolean(batchRun) || !unreadInTree.size;
  }
- allBranches.addEventListener("click", () => {
+ function expandKnownBranches() {
   let closed;
   while ((closed = content.querySelectorAll(branchToggle + '[aria-expanded="false"]')).length) {
    for (const button of closed) button.click();
   }
+ }
+ allBranches.addEventListener("click", () => {
+  expandKnownBranches();
   content.classList.add("diagram-wide-tree");
   allBranches.setAttribute("aria-pressed", "true");
   canvas.fit();
+ });
+ checkAll.addEventListener("click", async () => {
+  const run = {attempted:new Set(),loaded:0,failed:0};
+  const limit = 24, parallel = 4;
+  batchRun = run;
+  checkAll.disabled = true;
+  collapseBranches.disabled = true;
+  checkStatus.textContent = "Проверяю страницы…";
+  while (batchRun === run && run.attempted.size < limit) {
+   expandKnownBranches();
+   const batch = [...content.querySelectorAll(unreadToggle)]
+    .filter(button => !run.attempted.has(button))
+    .slice(0,Math.min(parallel,limit-run.attempted.size));
+   if (!batch.length) break;
+   for (const button of batch) run.attempted.add(button);
+   const results = await Promise.all(batch.map(button => loadBranches.get(button)()));
+   if (batchRun !== run) return;
+   run.loaded += results.filter(Boolean).length;
+   run.failed += results.filter(result=>!result).length;
+   checkStatus.textContent = `Проверяю страницы… Готово: ${run.attempted.size}.`;
+  }
+  if (batchRun !== run) return;
+  batchRun = undefined;
+  expandKnownBranches();
+  const left = [...content.querySelectorAll(unreadToggle)].some(button => !run.attempted.has(button));
+  checkStatus.textContent = `Загружено: ${run.loaded}.` +
+   (run.failed ? ` Недоступно: ${run.failed}.` : "") +
+   (left ? " Остались непроверенные страницы. Нажмите ещё раз, чтобы продолжить." : "");
+  updateDisclosures();
  });
  collapseBranches.addEventListener("click", () => {
   for (const button of [...content.querySelectorAll(openToggle)].reverse()) button.click();
@@ -260,7 +301,11 @@ function createRepoGraph() {
   const reached = new Set();
   let remaining = website ? 300 : 160;
   function unreadPage(page, details, ancestors) {
-   let item;
+   let item, pendingLoad;
+   function begin(output) {
+    if (!pendingLoad) pendingLoad = load(output).finally(() => { pendingLoad = undefined; });
+    return pendingLoad;
+   }
    async function load(output) {
     const pending = node("Загружаю ссылки…", "value");
     pending.setAttribute("role","status");
@@ -281,25 +326,35 @@ function createRepoGraph() {
      }
      const card = item.firstElementChild;
      card.dataset.type = "page";
+     unreadInTree.delete(button);
      card.querySelector(".diagram-toggle").textContent = page;
      output.replaceChildren(...children);
+     return true;
     } catch (error) {
      if (!item.isConnected) return;
      const failure = node(error.message || "Не удалось прочитать страницу.","value");
      failure.setAttribute("role","status");
      const retry = el("button","Повторить");
      retry.type = "button";
-     retry.onclick = () => { void load(output); };
+     retry.onclick = () => { void begin(output); };
      failure.firstElementChild.append(retry);
      output.replaceChildren(failure);
+     return false;
     } finally {
      output.removeAttribute("aria-busy");
      if (item.isConnected) updateDisclosures();
     }
    }
    item = expandableNode(`${page} · Не проверена`,"unread-page",source({PageURL:details.url}),output=>{
-    void load(output);
+    void begin(output);
     return [];
+   });
+   const button = item.querySelector(".diagram-toggle");
+   unreadInTree.add(button);
+   loadBranches.set(button, () => {
+    const output = item.lastElementChild;
+    if (output.hidden) button.click();
+    return begin(output);
    });
    return item;
   }
@@ -416,6 +471,7 @@ function createRepoGraph() {
   const conditions = mode === "conditions";
   for (const button of modes) button.setAttribute("aria-pressed", String(mode === button.dataset.diagram));
   handlerLabel.hidden = !conditions || !flow;
+  unreadInTree = new Set();
   const tree = el("ul", "", "diagram-tree");
   if (conditions && flow) {
    tree.append(node(flow.Name,"root",conditionTree(flow,flow.Steps),source(flow)));
@@ -423,6 +479,9 @@ function createRepoGraph() {
    const groups = overview();
    if (groups.length) tree.append(node(data.repo,"root",groups));
   }
+  batchRun = undefined;
+  checkStatus.textContent = "";
+  checkAll.hidden = !data.website || conditions;
   content.replaceChildren(tree.childElementCount ? tree : el("p", conditions ? "В поддерживаемых исходниках условия не найдены." : "Связей для схемы не найдено."));
   const groups = conditions ? [] : [...tree.querySelectorAll('.diagram-card[data-type="group"]')];
   jump.replaceChildren(new Option("Выбрать раздел", ""), ...groups.map((group,index) => {
@@ -434,7 +493,7 @@ function createRepoGraph() {
   allBranches.hidden = !hasButtons;
   disclosureTools.hidden = !hasButtons && !tree.querySelector(".diagram-toggle");
   allBranches.setAttribute("aria-pressed", "false");
-  collapseBranches.disabled = !visibleExpanded();
+  updateDisclosures();
   content.classList.remove("diagram-wide-tree");
   toTop();
   canvas.refresh();
