@@ -1,5 +1,7 @@
 # Markdown Index
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=py-markdown-index)**
+
 Строит оглавление для папки с Markdown-заметками. Его можно сохранить в отдельный файл рядом с заметками.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/py-markdown-index/)

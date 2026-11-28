@@ -1,5 +1,7 @@
 # Log Count
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=rs-log-count)**
+
 Считает уровни событий в текстовом журнале по первому полю каждой непустой строки.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/rs-log-count/)

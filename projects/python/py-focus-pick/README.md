@@ -1,5 +1,7 @@
 # Focus Pick
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=py-focus-pick)**
+
 Выбирает задачу, которая укладывается в заданный бюджет времени и имеет высокий приоритет относительно длительности.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/py-focus-pick/)

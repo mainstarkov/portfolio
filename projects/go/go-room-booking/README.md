@@ -1,5 +1,7 @@
 # Бронирование комнат
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=go-room-booking)**
+
 Бронирует комнату на интервал и отклоняет пересекающиеся заявки.
 
 [Инструкция на GitHub Pages](https://mainstarkov.github.io/portfolio/go-room-booking/) · [Скачать ZIP](https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip)

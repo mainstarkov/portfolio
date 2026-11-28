@@ -1,5 +1,7 @@
 # Line Dedupe
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=rs-line-dedupe)**
+
 Убирает повторяющиеся строки из UTF-8-файла, сохраняя порядок первых вхождений.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/rs-line-dedupe/)

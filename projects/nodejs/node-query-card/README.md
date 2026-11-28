@@ -1,5 +1,7 @@
 # Query Card
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=node-query-card)**
+
 Преобразует строку параметров URL в JSON, который удобно читать и обрабатывать.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/node-query-card/)

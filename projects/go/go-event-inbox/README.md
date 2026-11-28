@@ -1,5 +1,7 @@
 # Go Event Inbox
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=go-event-inbox)**
+
 HTTP API с журналом последних 100 событий и защитой от повторной записи одного события.
 
 [Инструкция на GitHub Pages](https://mainstarkov.github.io/portfolio/go-event-inbox/) · [Скачать исходники ZIP](https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip)

@@ -1,5 +1,7 @@
 # Subscription Ledger
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=py-subscription-ledger)**
+
 Подсчитывает годовую стоимость регулярных подписок и средний месячный расход.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/py-subscription-ledger/)

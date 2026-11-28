@@ -1,5 +1,7 @@
 # Unit Counter
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=rs-unit-counter)**
+
 Переводит число байтов в двоичные единицы IEC, например KiB, MiB и GiB.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/rs-unit-counter/)

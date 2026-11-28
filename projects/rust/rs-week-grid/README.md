@@ -1,5 +1,7 @@
 # Week Grid
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=rs-week-grid)**
+
 Генерирует Markdown-таблицу привычек с ячейками для отметок на семь дней.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/rs-week-grid/)

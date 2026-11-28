@@ -1,5 +1,7 @@
 # Складской учёт
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=go-stock-counter)**
+
 Принимает поступления и списания товара и защищает остаток от ухода в минус.
 
 [Инструкция на GitHub Pages](https://mainstarkov.github.io/portfolio/go-stock-counter/) · [Скачать ZIP](https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip)

@@ -9,6 +9,12 @@ API на Go, Telegram-боты и небольшие инструменты на
   <img src="assets/hedgehog-mushroom-trail.gif" alt="mainstarkov — пиксельный ёжик идёт по ночному лесу и собирает грибы в корзинку. Go, Python, Node.js и Rust." width="960">
 </picture>
 
+## Telegram Preview
+
+[Открыть браузерный чат](https://mainstarkov.github.io/telegram-preview/) · [Исходники](https://github.com/mainstarkov/telegram-preview).
+
+В карточках каталога кнопка «Попробовать» открывает интерактивный пример. Для Telegram-ботов доступен чат, для утилит и API — браузерное демо на тестовых данных.
+
 ## RepoMap
 
 [RepoMap](projects/go/repomap) читает папку Git и рисует переходы сайта, маршруты Go API, команды и кнопки Telegram-бота. Отчёт открывается локально в браузере.

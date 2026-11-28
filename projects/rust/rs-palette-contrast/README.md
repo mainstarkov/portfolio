@@ -1,5 +1,7 @@
 # Palette Contrast
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=rs-palette-contrast)**
+
 Вычисляет контраст двух цветов sRGB по их относительной яркости.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/rs-palette-contrast/)

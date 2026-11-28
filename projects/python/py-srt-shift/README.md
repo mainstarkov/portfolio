@@ -1,5 +1,7 @@
 # SRT Shift
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=py-srt-shift)**
+
 Сдвигает границы субтитров SRT на нужное число миллисекунд. Подходит, когда субтитры запаздывают или появляются слишком рано.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/py-srt-shift/)

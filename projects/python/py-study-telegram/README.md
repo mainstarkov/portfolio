@@ -1,5 +1,7 @@
 # Study Telegram
 
+**[Открыть чат бота](https://mainstarkov.github.io/telegram-preview/?demo=study)**
+
 Telegram-бот для повторения учебных карточек. Его можно попробовать в терминале без подключения к Telegram.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/py-study-telegram/)

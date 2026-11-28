@@ -1,5 +1,19 @@
 [
   {
+    "name": "telegram-preview",
+    "title": "Telegram Preview",
+    "description": "Открывает браузерный чат с демо Telegram-бота и распознаёт команды и кнопки из публичной ссылки GitHub.",
+    "stack": "JavaScript / Telegram",
+    "filters": [
+      "node",
+      "backend"
+    ],
+    "code": "https://github.com/mainstarkov/telegram-preview",
+    "demo": "https://mainstarkov.github.io/telegram-preview/",
+    "play": "https://mainstarkov.github.io/telegram-preview/",
+    "live": true
+  },
+  {
     "name": "repomap",
     "title": "RepoMap",
     "description": "Строит карту прямо по ссылке на GitHub: переходы сайта, HTTP-маршруты, команды и кнопки Telegram-бота.",
@@ -9,7 +23,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/repomap",
     "demo": "repomap/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/repomap/"
   },
   {
     "name": "go-room-booking",
@@ -22,7 +37,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-room-booking",
     "demo": "go-room-booking/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-room-booking"
   },
   {
     "name": "go-stock-counter",
@@ -35,7 +51,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-stock-counter",
     "demo": "go-stock-counter/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-stock-counter"
   },
   {
     "name": "go-choice-poll",
@@ -48,7 +65,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-choice-poll",
     "demo": "go-choice-poll/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-choice-poll"
   },
   {
     "name": "go-expiring-links",
@@ -61,7 +79,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-expiring-links",
     "demo": "go-expiring-links/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-expiring-links"
   },
   {
     "name": "go-job-queue",
@@ -74,7 +93,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-job-queue",
     "demo": "go-job-queue/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-job-queue"
   },
   {
     "name": "go-event-inbox",
@@ -87,7 +107,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/go/go-event-inbox",
     "demo": "go-event-inbox/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-event-inbox"
   },
   {
     "name": "spy-bot",
@@ -100,7 +121,8 @@
     ],
     "code": "https://github.com/mainstarkov/spy-bot",
     "demo": "https://mainstarkov.github.io/spy-bot/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/telegram-preview/?demo=spy"
   },
   {
     "name": "veil-browser",
@@ -113,7 +135,8 @@
     ],
     "code": "https://github.com/mainstarkov/veil-browser",
     "demo": "https://mainstarkov.github.io/veil-browser/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/veil-browser/"
   },
   {
     "name": "eztext-practice",
@@ -126,7 +149,8 @@
     ],
     "code": "https://github.com/mainstarkov/eztext-practice",
     "demo": "https://mainstarkov.github.io/eztext-practice/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/telegram-preview/?demo=ocr"
   },
   {
     "name": "py-study-telegram",
@@ -139,7 +163,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-study-telegram",
     "demo": "py-study-telegram/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/telegram-preview/?demo=study"
   },
   {
     "name": "ridex-local",
@@ -152,7 +177,8 @@
     ],
     "code": "https://github.com/mainstarkov/ridex-local",
     "demo": "https://mainstarkov.github.io/ridex-local/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=ridex-local"
   },
   {
     "name": "go-csv-columns",
@@ -164,7 +190,8 @@
     ],
     "code": "https://github.com/mainstarkov/go-csv-columns",
     "demo": "https://mainstarkov.github.io/go-csv-columns/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-csv-columns"
   },
   {
     "name": "go-dir-weight",
@@ -176,7 +203,8 @@
     ],
     "code": "https://github.com/mainstarkov/go-dir-weight",
     "demo": "https://mainstarkov.github.io/go-dir-weight/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-dir-weight"
   },
   {
     "name": "go-file-fingerprint",
@@ -188,7 +216,8 @@
     ],
     "code": "https://github.com/mainstarkov/go-file-fingerprint",
     "demo": "https://mainstarkov.github.io/go-file-fingerprint/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-file-fingerprint"
   },
   {
     "name": "go-text-tally",
@@ -200,7 +229,8 @@
     ],
     "code": "https://github.com/mainstarkov/go-text-tally",
     "demo": "https://mainstarkov.github.io/go-text-tally/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-text-tally"
   },
   {
     "name": "go-timer-board",
@@ -212,7 +242,8 @@
     ],
     "code": "https://github.com/mainstarkov/go-timer-board",
     "demo": "https://mainstarkov.github.io/go-timer-board/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-timer-board"
   },
   {
     "name": "go-url-batch",
@@ -224,7 +255,8 @@
     ],
     "code": "https://github.com/mainstarkov/go-url-batch",
     "demo": "https://mainstarkov.github.io/go-url-batch/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=go-url-batch"
   },
   {
     "name": "jsonbridge",
@@ -236,7 +268,8 @@
     ],
     "code": "https://github.com/mainstarkov/jsonbridge",
     "demo": "https://mainstarkov.github.io/jsonbridge/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=jsonbridge"
   },
   {
     "name": "netscout",
@@ -248,7 +281,8 @@
     ],
     "code": "https://github.com/mainstarkov/netscout",
     "demo": "https://mainstarkov.github.io/netscout/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=netscout"
   },
   {
     "name": "node-coffee-ratio",
@@ -260,7 +294,8 @@
     ],
     "code": "https://github.com/mainstarkov/node-coffee-ratio",
     "demo": "https://mainstarkov.github.io/node-coffee-ratio/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/node-coffee-ratio/"
   },
   {
     "name": "node-decision-bot",
@@ -272,7 +307,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/nodejs/node-decision-bot",
     "demo": "node-decision-bot/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=node-decision-bot"
   },
   {
     "name": "node-dev-port",
@@ -284,7 +320,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/nodejs/node-dev-port",
     "demo": "node-dev-port/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=node-dev-port"
   },
   {
     "name": "node-query-card",
@@ -296,7 +333,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/nodejs/node-query-card",
     "demo": "node-query-card/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=node-query-card"
   },
   {
     "name": "node-reading-pace",
@@ -308,7 +346,8 @@
     ],
     "code": "https://github.com/mainstarkov/node-reading-pace",
     "demo": "https://mainstarkov.github.io/node-reading-pace/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/node-reading-pace/"
   },
   {
     "name": "node-team-split",
@@ -320,7 +359,8 @@
     ],
     "code": "https://github.com/mainstarkov/node-team-split",
     "demo": "https://mainstarkov.github.io/node-team-split/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/node-team-split/"
   },
   {
     "name": "passforge",
@@ -332,7 +372,8 @@
     ],
     "code": "https://github.com/mainstarkov/passforge",
     "demo": "https://mainstarkov.github.io/passforge/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=passforge"
   },
   {
     "name": "py-focus-pick",
@@ -344,7 +385,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-focus-pick",
     "demo": "py-focus-pick/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=py-focus-pick"
   },
   {
     "name": "py-markdown-index",
@@ -356,7 +398,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-markdown-index",
     "demo": "py-markdown-index/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=py-markdown-index"
   },
   {
     "name": "py-rss-digest",
@@ -368,7 +411,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-rss-digest",
     "demo": "py-rss-digest/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=py-rss-digest"
   },
   {
     "name": "py-srt-shift",
@@ -380,7 +424,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-srt-shift",
     "demo": "py-srt-shift/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=py-srt-shift"
   },
   {
     "name": "py-subscription-ledger",
@@ -392,7 +437,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/python/py-subscription-ledger",
     "demo": "py-subscription-ledger/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=py-subscription-ledger"
   },
   {
     "name": "rezyme",
@@ -404,7 +450,8 @@
     ],
     "code": "https://github.com/mainstarkov/rezyme",
     "demo": "https://mainstarkov.github.io/rezyme/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/rezyme/"
   },
   {
     "name": "rs-line-dedupe",
@@ -416,7 +463,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-line-dedupe",
     "demo": "rs-line-dedupe/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=rs-line-dedupe"
   },
   {
     "name": "rs-log-count",
@@ -428,7 +476,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-log-count",
     "demo": "rs-log-count/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=rs-log-count"
   },
   {
     "name": "rs-palette-contrast",
@@ -440,7 +489,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-palette-contrast",
     "demo": "rs-palette-contrast/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=rs-palette-contrast"
   },
   {
     "name": "rs-pomodoro-plan",
@@ -452,7 +502,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-pomodoro-plan",
     "demo": "rs-pomodoro-plan/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=rs-pomodoro-plan"
   },
   {
     "name": "rs-unit-counter",
@@ -464,7 +515,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-unit-counter",
     "demo": "rs-unit-counter/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=rs-unit-counter"
   },
   {
     "name": "rs-week-grid",
@@ -476,7 +528,8 @@
     ],
     "code": "https://github.com/mainstarkov/portfolio/tree/main/projects/rust/rs-week-grid",
     "demo": "rs-week-grid/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=rs-week-grid"
   },
   {
     "name": "site-mirror-kit",
@@ -488,7 +541,8 @@
     ],
     "code": "https://github.com/mainstarkov/site-mirror-kit",
     "demo": "https://mainstarkov.github.io/site-mirror-kit/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=site-mirror-kit"
   },
   {
     "name": "socksy",
@@ -500,7 +554,8 @@
     ],
     "code": "https://github.com/mainstarkov/socksy",
     "demo": "https://mainstarkov.github.io/socksy/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/socksy/"
   },
   {
     "name": "taskflow",
@@ -512,7 +567,8 @@
     ],
     "code": "https://github.com/mainstarkov/taskflow",
     "demo": "https://mainstarkov.github.io/taskflow/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=taskflow"
   },
   {
     "name": "tidybox",
@@ -524,7 +580,8 @@
     ],
     "code": "https://github.com/mainstarkov/tidybox",
     "demo": "https://mainstarkov.github.io/tidybox/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=tidybox"
   },
   {
     "name": "tripplan",
@@ -536,7 +593,8 @@
     ],
     "code": "https://github.com/mainstarkov/tripplan",
     "demo": "https://mainstarkov.github.io/tripplan/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/tripplan/"
   },
   {
     "name": "uptime-check",
@@ -548,7 +606,8 @@
     ],
     "code": "https://github.com/mainstarkov/uptime-check",
     "demo": "https://mainstarkov.github.io/uptime-check/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=uptime-check"
   },
   {
     "name": "wanderlust",
@@ -560,7 +619,8 @@
     ],
     "code": "https://github.com/mainstarkov/wanderlust",
     "demo": "https://mainstarkov.github.io/wanderlust/",
-    "live": true
+    "live": true,
+    "play": "https://mainstarkov.github.io/wanderlust/"
   },
   {
     "name": "weathernow",
@@ -572,6 +632,7 @@
     ],
     "code": "https://github.com/mainstarkov/weathernow",
     "demo": "https://mainstarkov.github.io/weathernow/",
-    "live": false
+    "live": false,
+    "play": "https://mainstarkov.github.io/portfolio/play/?project=weathernow"
   }
 ]

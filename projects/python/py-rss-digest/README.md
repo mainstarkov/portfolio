@@ -1,5 +1,7 @@
 # RSS Digest
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=py-rss-digest)**
+
 Выводит заголовки и ссылки из локального RSS или Atom в читаемом виде.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/py-rss-digest/)

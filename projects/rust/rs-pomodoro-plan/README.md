@@ -1,5 +1,7 @@
 # Pomodoro Plan
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=rs-pomodoro-plan)**
+
 Строит расписание фокус-сессий и перерывов, считая минуты от начала занятия.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/rs-pomodoro-plan/)

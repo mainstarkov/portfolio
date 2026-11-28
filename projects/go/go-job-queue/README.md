@@ -1,5 +1,7 @@
 # Очередь задач
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=go-job-queue)**
+
 HTTP API с фоновой очередью. Воркер вычисляет SHA-256 и сохраняет результат для запроса статуса.
 
 [Открыть пример в браузере](https://mainstarkov.github.io/portfolio/go-job-queue/).

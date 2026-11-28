@@ -1,5 +1,7 @@
 # Голосование
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=go-choice-poll)**
+
 Принимает один голос от участника и показывает результаты по вариантам.
 
 [Инструкция на GitHub Pages](https://mainstarkov.github.io/portfolio/go-choice-poll/) · [Скачать ZIP](https://github.com/mainstarkov/portfolio/archive/refs/heads/main.zip)

@@ -1,5 +1,7 @@
 # Decision Bot
 
+**[Попробовать демо](https://mainstarkov.github.io/portfolio/play/?project=node-decision-bot)**
+
 Случайно выбирает один вариант из нескольких. Подходит для быстрых решений, когда каждый вариант равнозначен.
 
 [Открыть демо](https://mainstarkov.github.io/portfolio/node-decision-bot/)

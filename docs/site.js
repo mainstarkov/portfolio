@@ -26,7 +26,9 @@ function render() {
     cards.replaceChildren(...matching.map(project => {
         const card = element("article", "", "card");
         const links = element("div", "", "card-links");
-        links.append(link(project.demo, project.live ? "Открыть сайт ↗" : "Демо и запуск ↗"), link(project.code, "Исходники ↗"));
+        links.append(link(project.play || project.demo, "Попробовать ↗"));
+        if (project.play !== project.demo && !project.live) links.append(link(project.demo, "Запуск ↗"));
+        links.append(link(project.code, "Исходники ↗"));
         card.append(element("p", project.stack, "tags"), element("h3", project.title), element("p", project.description), links);
         return card;
     }));
