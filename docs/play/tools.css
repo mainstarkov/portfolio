@@ -1,0 +1,18 @@
+#panel{background:#fff;border:1px solid #c0d6e4;border-radius:18px;padding:clamp(14px,4vw,28px);margin-top:20px;box-shadow:0 12px 30px #16466212}
+#panel form label{margin:0}
+#panel input:not([type=color]):not([type=checkbox]){width:100%}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:12px}
+.fields input{display:block;margin-top:4px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#panel .actions button[type=button]{color:#15425d;background:#fff;border-color:#7899ad;font-weight:400}
+.result{border-top:1px solid #d0dfe9;margin-top:24px;padding-top:16px}
+.rows{margin:0}
+.rows li,.rows div{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#edf5fa;border-radius:10px;padding:10px 12px;margin-top:8px;overflow-wrap:anywhere}
+.rows button{font-size:.9rem}
+.rows dd{margin:0}
+.rows label{display:flex;align-items:center;gap:8px}
+.rows label[data-done=true]{text-decoration:line-through}
+.colors input{width:100%;height:48px;padding:4px;cursor:pointer}
+#swatch{padding:18px;border:1px solid #7899ad;border-radius:12px}
+#swatch strong{font-size:1.35rem}
+#ratio{font-weight:700}

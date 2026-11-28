@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Интерактивное демо · Portfolio</title>
+<link rel="stylesheet" href="weather.css">
+<link rel="stylesheet" href="tools.css">
+<script type="module" src="tools.js"></script>
+</head>
+<body>
+<main>
+<nav><a href="../">← Портфолио</a><a id="guide" hidden>Скачать и запустить ↗</a></nav>
+<h1 id="title">Интерактивное демо</h1>
+<p id="intro" class="intro"></p>
+<div id="panel"></div>
+<p id="status" role="status"></p>
+</main>
+
+<template id="go-stock-counter">
+<form>
+  <div class="fields">
+    <label>Артикул <input name="sku" value="coffee" required maxlength="40"></label>
+    <label>Количество <input name="quantity" type="number" value="12" required min="1" max="1000000"></label>
+  </div>
+  <div class="actions"><button name="operation" value="1">Пополнить</button><button name="operation" value="-1">Списать</button><button type="button" data-reset>Сбросить</button></div>
+</form>
+<section class="result"><h2>Остатки</h2><ul id="stock" class="rows"></ul></section>
+</template>
+
+<template id="taskflow">
+<form>
+  <label for="task">Новая задача</label>
+  <div class="search-row"><input id="task" name="task" placeholder="Например, проверить README" required maxlength="120"><button>Добавить</button></div>
+</form>
+<div class="actions"><button type="button" data-example>Загрузить пример</button><button type="button" data-reset>Очистить список</button></div>
+<section class="result"><h2>Задачи</h2><p id="progress"></p><ul id="tasks" class="rows"></ul></section>
+</template>
+
+<template id="rs-palette-contrast">
+<form>
+  <div class="fields colors">
+    <label>Цвет текста <input name="text" type="color" value="#202020"></label>
+    <label>Цвет фона <input name="background" type="color" value="#ffffff"></label>
+  </div>
+  <div class="actions"><button type="button" data-example>Показать слабый контраст</button><button type="button" data-reset>Сбросить</button></div>
+</form>
+<section class="result"><h2>Предпросмотр</h2><div id="swatch"><strong>Заголовок</strong><div>Пример обычного текста</div></div><p>Коэффициент контраста <output id="ratio"></output></p></section>
+</template>
+
+<template id="node-query-card">
+<form>
+  <label for="query">URL или строка запроса</label>
+  <div class="search-row"><input id="query" name="query" value="tag=go&amp;tag=rust&amp;q=hello+world" required maxlength="3000"><button>Разобрать</button></div>
+</form>
+<div class="actions"><button type="button" data-example>Пример с повторяющимся параметром</button></div>
+<section class="result"><h2>Параметры</h2><dl id="params" class="rows"></dl></section>
+</template>
+</body>
+</html>

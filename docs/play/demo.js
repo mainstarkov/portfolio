@@ -1,4 +1,4 @@
-const entries = new Map();
+export const entries = new Map();
 function add(id, input, hint, run, actions = {}) { entries.set(id, {input,hint,run,actions}); }
 const lines = value => value.trim().split(/\r?\n/).filter(Boolean);
 const words = value => value.trim().split(/\s+/).filter(Boolean);
@@ -123,37 +123,39 @@ add("go-csv-audit",JSON.stringify({csv:"name,city\nAda,London\nGrace\nLinus,Hels
  return {valid:!missing.length&&!wrong_width.length,rows:rows.length,missing,wrong_width};
 },{"Исправленная таблица":JSON.stringify({csv:"name,city\nAda,London\nGrace,New York",required:["name","city"]},null,2)});
 
-const id = new URLSearchParams(location.search).get("project");
-const demo = entries.get(id);
-const form = document.querySelector("#input");
-const field = form.querySelector("textarea");
-const result = document.querySelector("#result");
-const reset = document.querySelector("#reset");
-let state = {};
-function show(value){result.textContent = typeof value==="string"?value:JSON.stringify(value,null,2);}
-if(demo){
- field.value=demo.input;
- document.querySelector("#hint").textContent=demo.hint+(id==="netscout"?" Введённый адрес передаётся Google Public DNS.":" Действия выполняются в браузерном демо.");
- document.querySelector("#title").textContent=id;
- for(const [label,value] of Object.entries(demo.actions)){
-  const button=document.createElement("button");
-  button.textContent=label;button.onclick=()=>{field.value=value;form.requestSubmit();};
-  document.querySelector(".scenarios").append(button);
+if (document.querySelector("#input")) {
+ const id = new URLSearchParams(location.search).get("project");
+ const demo = entries.get(id);
+ const form = document.querySelector("#input");
+ const field = form.querySelector("textarea");
+ const result = document.querySelector("#result");
+ const reset = document.querySelector("#reset");
+ let state = {};
+ function show(value){result.textContent = typeof value==="string"?value:JSON.stringify(value,null,2);}
+ if(demo){
+  field.value=demo.input;
+  document.querySelector("#hint").textContent=demo.hint+(id==="netscout"?" Введённый адрес передаётся Google Public DNS.":" Действия выполняются в браузерном демо.");
+  document.querySelector("#title").textContent=id;
+  for(const [label,value] of Object.entries(demo.actions)){
+   const button=document.createElement("button");
+   button.textContent=label;button.onclick=()=>{field.value=value;form.requestSubmit();};
+   document.querySelector(".scenarios").append(button);
+  }
+  form.onsubmit=async event=>{
+   event.preventDefault();
+   const controls=[...document.querySelectorAll(".console button, .console textarea")];
+   for(const control of controls) control.disabled=true;
+   try{show(await demo.run(field.value,state,show));}catch(error){show(error.message);}
+   finally{for(const control of controls)control.disabled=false;}
+  };
+  reset.onclick=()=>{state={};field.value=demo.input;show("Демо сброшено.");};
+  fetch("../projects.json").then(response=>response.json()).then(items=>{
+   const project=items.find(item=>item.name===id);if(!project)return;
+   document.querySelector("#title").textContent=project.title;
+   document.querySelector("#intro").textContent=project.description;
+   document.querySelector("#guide").href=new URL(project.demo,new URL("../",location.href)).href;
+  }).catch(()=>{});
+ }else{
+  form.hidden=true;reset.hidden=true;show("Откройте проект из каталога, чтобы загрузить его входные данные.");
  }
- form.onsubmit=async event=>{
-  event.preventDefault();
-  const controls=[...document.querySelectorAll(".console button, .console textarea")];
-  for(const control of controls) control.disabled=true;
-  try{show(await demo.run(field.value,state,show));}catch(error){show(error.message);}
-  finally{for(const control of controls)control.disabled=false;}
- };
- reset.onclick=()=>{state={};field.value=demo.input;show("Демо сброшено.");};
- fetch("../projects.json").then(response=>response.json()).then(items=>{
-  const project=items.find(item=>item.name===id);if(!project)return;
-  document.querySelector("#title").textContent=project.title;
-  document.querySelector("#intro").textContent=project.description;
-  document.querySelector("#guide").href=new URL(project.demo,new URL("../",location.href)).href;
- }).catch(()=>{});
-}else{
- form.hidden=true;reset.hidden=true;show("Откройте проект из каталога, чтобы загрузить его входные данные.");
 }
