@@ -113,3 +113,5 @@
 #diagram-content[data-layout=horizontal] .diagram-children>.diagram-node:first-child::after{top:50%}
 #diagram-content[data-layout=horizontal] .diagram-children>.diagram-node:last-child::after{bottom:50%}
 #diagram-content[data-layout=horizontal] .diagram-children>.diagram-node:only-child::after{display:none}
+.diagram-card[data-type="unread-page"]{border-style:dashed}
+.diagram-card[data-type="unread-page"] .diagram-toggle{color:#b6d9ff}

@@ -224,7 +224,7 @@ function createRepoGraph() {
   item.append(children);
   disclosure.addEventListener("click", () => {
    const opening = children.hidden;
-   if (opening && !children.firstChild) children.append(...render());
+   if (opening && !children.firstChild) children.append(...render(children));
    children.hidden = !opening;
    disclosure.setAttribute("aria-expanded", String(opening));
    updateDisclosures();
@@ -259,12 +259,57 @@ function createRepoGraph() {
   const website = data.website;
   const reached = new Set();
   let remaining = website ? 300 : 160;
+  function unreadPage(page, details, ancestors) {
+   let item;
+   async function load(output) {
+    const pending = node("Загружаю ссылки…", "value");
+    pending.setAttribute("role","status");
+    output.replaceChildren(pending);
+    output.setAttribute("aria-busy","true");
+    try {
+     const result = await website.loadPage(details.url);
+     if (!item.isConnected) return;
+     const nextAncestors = new Set([...ancestors,page,result.actual]);
+     let children;
+     if (result.actual !== page && reached.has(result.actual)) {
+      children = [node(`${result.actual} · уже в дереве`,"value",[],source({PageURL:website.pages.get(result.actual).url}))];
+     } else {
+      reached.add(result.actual);
+      remaining += result.links.length;
+      children = result.links.map(edge=>walk(edge.To,edge,nextAncestors));
+      if (!children.length) children.push(node("Внутренних ссылок не найдено.","value"));
+     }
+     const card = item.firstElementChild;
+     card.dataset.type = "page";
+     card.querySelector(".diagram-toggle").textContent = page;
+     output.replaceChildren(...children);
+    } catch (error) {
+     if (!item.isConnected) return;
+     const failure = node(error.message || "Не удалось прочитать страницу.","value");
+     failure.setAttribute("role","status");
+     const retry = el("button","Повторить");
+     retry.type = "button";
+     retry.onclick = () => { void load(output); };
+     failure.firstElementChild.append(retry);
+     output.replaceChildren(failure);
+    } finally {
+     output.removeAttribute("aria-busy");
+     if (item.isConnected) updateDisclosures();
+    }
+   }
+   item = expandableNode(`${page} · Не проверена`,"unread-page",source({PageURL:details.url}),output=>{
+    void load(output);
+    return [];
+   });
+   return item;
+  }
   function walk(page, incoming, ancestors) {
    remaining--;
    if (ancestors.has(page)) return node(`${page} · повтор`, "value", [], source(incoming));
    if (reached.has(page)) return node(`${page} · уже в дереве`, "value", [], source(incoming));
    reached.add(page);
    const details = website?.pages.get(page);
+   if (details?.unread) return unreadPage(page,details,ancestors);
    const children = [];
    const nextAncestors = new Set([...ancestors, page]);
    for (const edge of byPage.get(page) || []) {

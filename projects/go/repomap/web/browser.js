@@ -298,16 +298,30 @@ async function buildWebsite(url) {
   }
  }
  const unique = new Set();
- const mapped = edges.flatMap(edge => {
-  const to = redirects.get(edge.To) || edge.To;
-  const key = JSON.stringify([edge.From,to]);
-  if (edge.From === to || unique.has(key)) return [];
-  unique.add(key);
-  if (!pages.has(to)) pages.set(to,{url:edge.PageURL,note:"Не проверена в этом обходе"});
-  return [{...edge,To:to,PageURL:pages.get(to).url}];
- });
- renderMap(root.page.host,null,mapped,[],loaded,{root:start,pages});
- status.textContent = `Прочитано страниц: ${loaded}. Обход до ${depth} переходов, до ${limit} страниц и до 24 ссылок на страницу.`
+ function mapLinks(links) {
+  return links.flatMap(edge => {
+   const to = redirects.get(edge.To) || edge.To;
+   const key = JSON.stringify([edge.From,to]);
+   if (edge.From === to || unique.has(key)) return [];
+   unique.add(key);
+   if (!pages.has(to)) pages.set(to,{url:edge.PageURL,unread:true,note:"Не проверена в этом обходе"});
+   return [{...edge,To:to,PageURL:pages.get(to).url}];
+  });
+ }
+ const mapped = mapLinks(edges);
+
+ async function loadPage(address) {
+  const {page,links} = await readWebsitePage(address,origin);
+  const actual = path(page);
+  const requested = path(new URL(address));
+  if (requested !== actual) redirects.set(requested,actual);
+  pages.set(requested,{url:page.href});
+  const previouslyRead = pages.has(actual) && !pages.get(actual).note && actual !== requested;
+  pages.set(actual,{url:page.href});
+  return {actual, links:previouslyRead ? [] : mapLinks(links)};
+ }
+ renderMap(root.page.host,null,mapped,[],loaded,{root:start,pages,loadPage});
+ status.textContent = `Прочитано страниц: ${loaded}. Обход до ${depth} переходов, до ${limit} страниц и до 24 ссылок на страницу. Страницы с пометкой «Не проверена» можно открыть в дереве.`
   + (failed ? ` Недоступно страниц: ${failed}.` : "");
 }
 
