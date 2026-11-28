@@ -6,7 +6,8 @@
 <meta name="description" content="Портфолио mainstarkov. Бэкенд на Go, Telegram-боты, инструменты и веб-демо.">
 <title>mainstarkov — портфолио разработчика | Go, API, Telegram</title>
 <link rel="icon" href="hedgehog.jpg">
-<link rel="stylesheet" href="site.css?v=forest-1">
+<link rel="stylesheet" href="site.css?v=forest-2">
+<script src="forest.js" defer></script>
 <script src="site.js?v=interactive-1" defer></script>
 </head>
 <body>
@@ -30,9 +31,14 @@
 </aside>
 </section>
 <picture class="forest-banner">
- <source media="(prefers-reduced-motion: reduce)" srcset="hedgehog-big-basket.png">
- <img src="hedgehog-big-basket.gif" alt="Рыжий пиксельный ёжик гуляет по ночному лесу и собирает грибы в корзинку" width="960" height="300">
+ <source media="(prefers-reduced-motion: reduce)" srcset="hedgehog-forest-cycle.png">
+ <img src="hedgehog-forest-cycle.gif" alt="Рыжий пиксельный ёжик гуляет по лесу утром и ночью и собирает грибы в корзинку" width="960" height="300">
 </picture>
+<div class="forest-modes" role="group" aria-label="Время суток в лесу" hidden>
+ <button type="button" data-forest-mode="cycle" aria-pressed="true">Авто</button>
+ <button type="button" data-forest-mode="morning" aria-pressed="false">Утро</button>
+ <button type="button" data-forest-mode="night" aria-pressed="false">Ночь</button>
+</div>
 <section id="projects" class="section">
 <div class="section-top"><div><p class="overline">КАТАЛОГ</p><h2>Проекты</h2></div><p id="count" class="muted" aria-live="polite"></p></div>
 <div class="toolbar">

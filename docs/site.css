@@ -15,3 +15,9 @@
 
 .forest-banner{display:block;margin:20px auto 0;max-width:960px}
 .forest-banner img{display:block;width:100%;height:auto;border-radius:16px}
+
+.forest-modes{display:flex;justify-content:center;gap:8px;margin:10px auto 0}
+.forest-modes[hidden]{display:none}
+.forest-modes button{border:1px solid #52735e;border-radius:9px;padding:7px 13px;background:#182a23;color:#ecf4e8;font:inherit;cursor:pointer}
+.forest-modes button[aria-pressed="true"]{background:#b9e4b1;border-color:#b9e4b1;color:#132a1c}
+.forest-modes button:focus-visible{outline:2px solid #d1efc3;outline-offset:3px}
