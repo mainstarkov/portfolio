@@ -72,18 +72,20 @@ function createRepoGraph() {
  const allBranches = section.querySelector("#diagram-all");
  const collapseBranches = section.querySelector("#diagram-collapse");
  const disclosureTools = section.querySelector(".diagram-disclosure-tools");
+ const branchToggle = '.diagram-card:is([data-type="button"],[data-type="page"]) .diagram-toggle';
  const openToggle = '.diagram-toggle[aria-expanded="true"]';
  function visibleExpanded() {
   return [...content.querySelectorAll(openToggle)].some(button => !button.closest("[hidden]"));
  }
  function updateDisclosures() {
   collapseBranches.disabled = !visibleExpanded();
-  const closed = content.querySelector('.diagram-card[data-type="button"] .diagram-toggle[aria-expanded="false"]');
+  const closed = content.querySelector(branchToggle + '[aria-expanded="false"]');
   if (closed) allBranches.setAttribute("aria-pressed", "false");
  }
  allBranches.addEventListener("click", () => {
-  for (const button of content.querySelectorAll('.diagram-card[data-type="button"] .diagram-toggle[aria-expanded="false"]')) {
-   button.click();
+  let closed;
+  while ((closed = content.querySelectorAll(branchToggle + '[aria-expanded="false"]')).length) {
+   for (const button of closed) button.click();
   }
   content.classList.add("diagram-wide-tree");
   allBranches.setAttribute("aria-pressed", "true");
@@ -254,13 +256,15 @@ function createRepoGraph() {
    if (!byPage.has(edge.From)) byPage.set(edge.From, []);
    byPage.get(edge.From).push(edge);
   }
+  const website = data.website;
   const reached = new Set();
-  let remaining = 160;
+  let remaining = website ? 300 : 160;
   function walk(page, incoming, ancestors) {
    remaining--;
    if (ancestors.has(page)) return node(`${page} · повтор`, "value", [], source(incoming));
-   if (reached.has(page)) return node(`${page} · ветка выше`, "value", [], source(incoming));
+   if (reached.has(page)) return node(`${page} · уже в дереве`, "value", [], source(incoming));
    reached.add(page);
+   const details = website?.pages.get(page);
    const children = [];
    const nextAncestors = new Set([...ancestors, page]);
    for (const edge of byPage.get(page) || []) {
@@ -270,8 +274,15 @@ function createRepoGraph() {
     }
     children.push(walk(edge.To, edge, nextAncestors));
    }
-   return node(page, "value", children, incoming ? source(incoming) : null);
+   const link = details ? source({PageURL:details.url}) : incoming ? source(incoming) : null;
+   if (website && children.length) {
+    const item = expandableNode(page,"page",link,()=>children);
+    if (!incoming) item.querySelector(".diagram-toggle").click();
+    return item;
+   }
+   return node(details?.note ? `${page} · ${details.note}` : page,"value",children,link);
   }
+  if (website) return [walk(website.root,null,new Set())];
   const targets = new Set(links.map(edge => edge.To));
   const pages = [...byPage.keys()].sort((a,b) => Number(targets.has(a)) - Number(targets.has(b)) || a.localeCompare(b));
   const roots = [];
@@ -374,11 +385,11 @@ function createRepoGraph() {
    return new Option(group.querySelector(".diagram-text").textContent, String(index));
   }));
   jumpLabel.hidden = groups.length === 0;
-  const hasButtons = !conditions && Boolean(tree.querySelector('.diagram-card[data-type="button"]'));
+  const hasButtons = !conditions && Boolean(tree.querySelector(branchToggle));
   allBranches.hidden = !hasButtons;
   disclosureTools.hidden = !hasButtons && !tree.querySelector(".diagram-toggle");
   allBranches.setAttribute("aria-pressed", "false");
-  collapseBranches.disabled = true;
+  collapseBranches.disabled = !visibleExpanded();
   content.classList.remove("diagram-wide-tree");
   toTop();
   canvas.refresh();
@@ -386,16 +397,16 @@ function createRepoGraph() {
    ? `${flow.File}:${flow.Line} · сверху вниз в порядке исходника${flow.Limited ? " · показаны первые 180 элементов" : ""}`
    : tree.querySelector('[data-type="button"]')
     ? "Нажмите на кнопку бота, чтобы раскрыть её условия прямо в дереве."
-    : data.edges.some(edge => edge.Kind === "site")
+    : (data.website || data.edges.some(edge => edge.Kind === "site"))
      ? "Переходы между страницами. Вид дерева можно переключить выше."
      : "Выберите вид дерева для просмотра связей.";
  }
  modes.forEach(button => button.addEventListener("click", () => { mode = button.dataset.diagram; paint(); }));
  handler.addEventListener("change", paint);
- return (repo, ref, edges, flows, callbacks) => {
+ return (repo, ref, edges, flows, callbacks, website) => {
   const priority = flow => /callback|handle|dispatch|route|message|process/i.test(flow.Name) ? 0 : 1;
   flows.sort((a,b) => priority(a) - priority(b) || Number(!/callback/i.test(a.Name)) - Number(!/callback/i.test(b.Name)) || a.File.localeCompare(b.File) || a.Line - b.Line);
-  data = {repo, ref, edges, flows, callbacks};
+  data = {repo, ref, edges, flows, callbacks, website};
   handler.replaceChildren(...flows.map((flow,index) => new Option(`${flow.Name} · ${flow.File}:${flow.Line}`, String(index))));
   mode = "overview";
   section.hidden = false;

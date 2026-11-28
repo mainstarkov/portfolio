@@ -8,7 +8,7 @@ browserPanel.innerHTML = `
   <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><a class="repo-example" href="?demo=spy">Пример бота</a><a class="repo-example" href="?demo=site">Пример сайта</a><a class="repo-example" href="start.html">Скачать и запустить</a></div>
  </form>
  <p id="repo-status" role="status"></p>
- <p>Для репозитория карта строится по исходникам. По адресу сайта RepoMap покажет ссылки стартовой страницы, если браузеру доступен её HTML.</p>`;
+ <p>Для репозитория карта строится по исходникам. По адресу сайта RepoMap обойдёт внутренние страницы, HTML которых доступен браузеру.</p>`;
 document.querySelector(".toolbar").before(browserPanel);
 const heading = document.querySelector("header h1");
 const summary = document.querySelector("header p");
@@ -116,12 +116,12 @@ function sourceLink(repo, sha, edge, label) {
  link.href = edge.PageURL || `https://github.com/${repo}/blob/${sha}/${edge.File.split("/").map(encodeURIComponent).join("/")}#L${edge.Line}`;
  return link;
 }
-function renderMap(repo, sha, edges, flows, files) {
+function renderMap(repo, sha, edges, flows, files, website) {
  const callbacks = new Map();
  for (const edge of edges) {
   if (edge.Label === "Callback" && !callbacks.has(edge.From)) callbacks.set(edge.From, edge);
  }
- showGraph(repo, sha, edges, flows, callbacks);
+ showGraph(repo, sha, edges, flows, callbacks, website);
  const items = edges.map(edge => {
   const item = el("article", "", "flow");
   item.dataset.kind = edge.Kind;
@@ -150,7 +150,7 @@ function renderMap(repo, sha, edges, flows, files) {
   return item;
  });
  document.querySelector("header h1").textContent = repo;
- document.querySelector("header p").textContent = `${sha ? files + " файлов изучено" : "Стартовая страница"} · ${edges.length} связей найдено`;
+ document.querySelector("header p").textContent = `${sha ? files + " файлов изучено" : "Страниц прочитано: " + files} · ${edges.length} связей найдено`;
  document.title = `${repo} · RepoMap`;
  document.querySelector("#map").replaceChildren(...items);
  document.dispatchEvent(new Event("repomap:changed"));
@@ -191,22 +191,21 @@ async function buildRepository(input) {
   + (failed ? ` Не удалось прочитать файлов: ${failed}.` : "");
 }
 
-async function buildWebsite(url) {
- status.textContent = "Загружаю стартовую страницу…";
- const local = url.origin === location.origin && ["127.0.0.1","localhost"].includes(url.hostname);
- if ((!local && url.protocol !== "https:") || url.username || url.password) {
-  throw new Error("Для сайта укажите публичную HTTPS-ссылку без логина и пароля.");
- }
+async function readWebsitePage(url, origin) {
  let response;
  try {
-  response = await fetch(url, {credentials:"omit",signal:AbortSignal.timeout(8000)});
+  response = await fetch(url, {credentials:"omit",signal:AbortSignal.timeout(6500),referrerPolicy:"no-referrer"});
  } catch {
-  throw new Error("Браузер не смог прочитать сайт. Если сайт закрывает доступ к HTML из других доменов, вставьте ссылку на его GitHub-репозиторий.");
+  throw new Error("HTML недоступен. Сайт может запрещать чтение из других доменов.");
  }
  if (!response.ok) throw new Error(`Сайт вернул HTTP ${response.status}.`);
+ if (origin && new URL(response.url).origin !== origin) {
+  throw new Error("Переадресация на другой сайт.");
+ }
  if (!/^text\/html\b/i.test(response.headers.get("content-type") || "")) {
   throw new Error("По этому адресу нет HTML-страницы.");
  }
+ const page = new URL(response.url);
  const reader = response.body.getReader();
  const decoder = new TextDecoder();
  let html = "", bytes = 0;
@@ -221,7 +220,6 @@ async function buildWebsite(url) {
   html += decoder.decode(value,{stream:true});
  }
  html += decoder.decode();
- const page = new URL(response.url);
  const documentFragment = document.createElement("template");
  documentFragment.innerHTML = html;
  const pathLabel = address => address.pathname + address.search;
@@ -232,12 +230,12 @@ async function buildWebsite(url) {
   try { linkBase = new URL(base,page); } catch {}
  }
  for (const anchor of documentFragment.content.querySelectorAll("a[href]:not([download])")) {
-  if (links.size === 120) break;
+  if (links.size === 24) break;
   const href = anchor.getAttribute("href").trim();
   if (!href || href.startsWith("#")) continue;
   let target;
   try { target = new URL(href,linkBase); } catch { continue; }
-  if (target.origin !== page.origin || target.username || target.password ||
+  if (!/^https?:$/.test(target.protocol) || target.origin !== page.origin || target.username || target.password ||
       pathLabel(target) === pathLabel(page)) continue;
   const key = pathLabel(target);
   if (links.has(key)) continue;
@@ -245,11 +243,72 @@ async function buildWebsite(url) {
   links.set(key,{Kind:"site",Label:"Переход",From:pathLabel(page),To:key,
    File:"",Line:0,PageURL:target.href});
  }
- const edges = [...links.values()];
- renderMap(page.host, null, edges, [], 1);
- status.textContent = edges.length
-  ? "Показаны внутренние ссылки из HTML стартовой страницы. Переходы, созданные JavaScript, могут отсутствовать."
-  : "В HTML этой страницы внутренних ссылок не найдено.";
+ return {page,links:[...links.values()]};
+}
+
+async function buildWebsite(url) {
+ const local = url.origin === location.origin && ["127.0.0.1","localhost"].includes(url.hostname);
+ if ((!local && url.protocol !== "https:") || url.username || url.password) {
+  throw new Error("Для сайта укажите публичную HTTPS-ссылку без логина и пароля.");
+ }
+ status.textContent = "Загружаю стартовую страницу…";
+ const root = await readWebsitePage(url,null);
+ const path = address => address.pathname + address.search;
+ const start = path(root.page);
+ const origin = root.page.origin;
+ const limit = 12, depth = 3;
+ const seen = new Set([start,path(url)]);
+ const pages = new Map([[start,{url:root.page.href}]]);
+ const edges = [...root.links];
+ const redirects = new Map();
+ if (url.origin === origin && path(url) !== start) redirects.set(path(url),start);
+ let loaded = 1, failed = 0, attempted = 1;
+ let frontier = root.links;
+
+ for (let level=1; level<=depth && frontier.length && attempted<limit; level++) {
+  const batch = [];
+  for (const edge of frontier) {
+   if (attempted === limit) break;
+   if (seen.has(edge.To)) continue;
+   seen.add(edge.To);
+   attempted++;
+   batch.push(edge);
+  }
+  frontier = [];
+  for (let offset=0; offset<batch.length; offset+=4) {
+   status.textContent = `Читаю внутренние страницы · прочитано: ${loaded}…`;
+   const results = await Promise.allSettled(batch.slice(offset,offset+4).map(edge=>readWebsitePage(edge.PageURL,origin)));
+   for (const [index,result] of results.entries()) {
+    const incoming = batch[offset+index];
+    if (result.status === "rejected") {
+     failed++;
+     pages.set(incoming.To,{url:incoming.PageURL,note:result.reason.message});
+     continue;
+    }
+    loaded++;
+    const {page,links} = result.value;
+    const key = path(page);
+    seen.add(key);
+    if (incoming.To !== key) redirects.set(incoming.To,key);
+    if (pages.has(key) && !pages.get(key).note) continue;
+    pages.set(key,{url:page.href});
+    edges.push(...links);
+    frontier.push(...links);
+   }
+  }
+ }
+ const unique = new Set();
+ const mapped = edges.flatMap(edge => {
+  const to = redirects.get(edge.To) || edge.To;
+  const key = JSON.stringify([edge.From,to]);
+  if (edge.From === to || unique.has(key)) return [];
+  unique.add(key);
+  if (!pages.has(to)) pages.set(to,{url:edge.PageURL,note:"Не проверена в этом обходе"});
+  return [{...edge,To:to,PageURL:pages.get(to).url}];
+ });
+ renderMap(root.page.host,null,mapped,[],loaded,{root:start,pages});
+ status.textContent = `Прочитано страниц: ${loaded}. Обход до ${depth} переходов, до ${limit} страниц и до 24 ссылок на страницу.`
+  + (failed ? ` Недоступно страниц: ${failed}.` : "");
 }
 
 async function runAnalysis(input) {
