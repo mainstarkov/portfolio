@@ -79,7 +79,8 @@ function createRepoGraph() {
  const checkStop = section.querySelector("#diagram-check-stop");
  const checkStatus = section.querySelector("#diagram-check-status");
  const loadBranches = new WeakMap();
- let batchRun;
+ let batchRun, pausedBatch;
+ let pageResults = new Map();
  let unreadInTree = new Set();
  const unreadToggle = '.diagram-card[data-type="unread-page"] .diagram-toggle';
  const branchToggle = '.diagram-card:is([data-type="button"],[data-type="page"]) .diagram-toggle';
@@ -91,6 +92,8 @@ function createRepoGraph() {
   collapseBranches.disabled = Boolean(batchRun) || !visibleExpanded();
   const closed = content.querySelector(branchToggle + '[aria-expanded="false"]');
   if (closed) allBranches.setAttribute("aria-pressed", "false");
+  const canContinue = pausedBatch && [...unreadInTree].some(button=>!pausedBatch.has(button));
+  checkAll.textContent = canContinue ? "Продолжить" : "Проверить все";
   checkAll.disabled = Boolean(batchRun) || !unreadInTree.size;
  }
  function expandKnownBranches() {
@@ -105,23 +108,30 @@ function createRepoGraph() {
   allBranches.setAttribute("aria-pressed", "true");
   canvas.fit();
  });
- function reportBatch(run, prefix) {
-  const checked = run.loaded + run.failed;
-  checkStatus.textContent = `${prefix} Проверено: ${checked} · Загружено: ${run.loaded} · Недоступно: ${run.failed}.`;
+ function reportBatch(prefix) {
+  let loaded = data.website.initialLoaded;
+  let failed = data.website.initialFailed;
+  for (const result of pageResults.values()) {
+   if (result) loaded++;
+   else failed++;
+  }
+  checkStatus.textContent = `${prefix} Проверено: ${loaded + failed} · Загружено: ${loaded} · Недоступно: ${failed}.`;
  }
  checkStop.addEventListener("click", () => {
   if (!batchRun) return;
   checkStop.disabled = true;
   batchRun.controller.abort();
-  reportBatch(batchRun,"Останавливаю…");
+  reportBatch("Останавливаю…");
  });
  checkAll.addEventListener("click", async () => {
-  const run = {attempted:new Set(),loaded:0,failed:0,controller:new AbortController()};
+  const continuing = pausedBatch && [...unreadInTree].some(button=>!pausedBatch.has(button));
+  const run = {attempted:continuing ? pausedBatch : new Set(),controller:new AbortController()};
+  pausedBatch = undefined;
   const signal = run.controller.signal;
   batchRun = run;
   checkStop.hidden = checkStop.disabled = false;
   updateDisclosures();
-  reportBatch(run,"Проверяю страницы…");
+  reportBatch("Проверяю страницы…");
   while (batchRun === run && !signal.aborted) {
    expandKnownBranches();
    const batch = [...content.querySelectorAll(unreadToggle)]
@@ -131,17 +141,17 @@ function createRepoGraph() {
    for (const button of batch) run.attempted.add(button);
    await Promise.all(batch.map(async button => {
     const result = await loadBranches.get(button)(signal);
-    if (batchRun !== run || result === undefined) return;
-    if (result) run.loaded++;
-    else run.failed++;
-    reportBatch(run,signal.aborted ? "Останавливаю…" : "Проверяю страницы…");
+    if (batchRun !== run) return;
+    if (result === undefined) run.attempted.delete(button);
+    reportBatch(signal.aborted ? "Останавливаю…" : "Проверяю страницы…");
    }));
   }
   if (batchRun !== run) return;
   batchRun = undefined;
   checkStop.hidden = true;
-  if (!signal.aborted) expandKnownBranches();
-  reportBatch(run,signal.aborted ? "Обход остановлен." : "Обход завершён.");
+  if (signal.aborted) pausedBatch = run.attempted;
+  else expandKnownBranches();
+  reportBatch(signal.aborted ? "Обход остановлен." : "Обход завершён.");
   updateDisclosures();
  });
  collapseBranches.addEventListener("click", () => {
@@ -339,6 +349,7 @@ function createRepoGraph() {
      const card = item.firstElementChild;
      card.dataset.type = "page";
      unreadInTree.delete(button);
+     pageResults.set(page,true);
      card.querySelector(".diagram-toggle").textContent = page;
      output.replaceChildren(...children);
      return true;
@@ -357,10 +368,14 @@ function createRepoGraph() {
      retry.onclick = () => { void begin(output); };
      failure.firstElementChild.append(retry);
      output.replaceChildren(failure);
+     pageResults.set(page,false);
      return false;
     } finally {
      output.removeAttribute("aria-busy");
-     if (item.isConnected) updateDisclosures();
+     if (item.isConnected) {
+      updateDisclosures();
+      if (!batchRun) reportBatch(pausedBatch ? "Обход остановлен." : "");
+     }
     }
    }
    item = expandableNode(`${page} · Не проверена`,"unread-page",source({PageURL:details.url}),output=>{
@@ -491,6 +506,8 @@ function createRepoGraph() {
   for (const button of modes) button.setAttribute("aria-pressed", String(mode === button.dataset.diagram));
   handlerLabel.hidden = !conditions || !flow;
   unreadInTree = new Set();
+  pageResults = new Map();
+  pausedBatch = undefined;
   const tree = el("ul", "", "diagram-tree");
   if (conditions && flow) {
    tree.append(node(flow.Name,"root",conditionTree(flow,flow.Steps),source(flow)));
@@ -503,6 +520,7 @@ function createRepoGraph() {
   checkStop.hidden = true;
   checkStatus.textContent = "";
   checkAll.hidden = !data.website || conditions;
+  if (!checkAll.hidden) reportBatch("");
   content.replaceChildren(tree.childElementCount ? tree : el("p", conditions ? "В поддерживаемых исходниках условия не найдены." : "Связей для схемы не найдено."));
   const groups = conditions ? [] : [...tree.querySelectorAll('.diagram-card[data-type="group"]')];
   jump.replaceChildren(new Option("Выбрать раздел", ""), ...groups.map((group,index) => {

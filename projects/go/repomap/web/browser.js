@@ -323,7 +323,7 @@ async function buildWebsite(url) {
   pages.set(actual,{url:page.href});
   return {actual, links:previouslyRead ? [] : mapLinks(links)};
  }
- renderMap(root.page.host,null,mapped,[],loaded,{root:start,pages,loadPage});
+ renderMap(root.page.host,null,mapped,[],loaded,{root:start,pages,loadPage,initialLoaded:loaded,initialFailed:failed});
  status.textContent = `Прочитано страниц: ${loaded}. Обход до ${depth} переходов, до ${limit} страниц и до 24 ссылок на страницу. Страницы с пометкой «Не проверена» можно открыть в дереве.`
   + (failed ? ` Недоступно страниц: ${failed}.` : "");
 }
