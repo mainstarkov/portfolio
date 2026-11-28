@@ -13,7 +13,7 @@ function createRepoGraph() {
    <button type="button" data-diagram="conditions" aria-pressed="false">Условия</button></div>
    <div class="diagram-scale" aria-label="Управление масштабом">
     <button type="button" id="diagram-minus" aria-label="Уменьшить масштаб">−</button>
-    <label class="diagram-zoom"><span class="diagram-sr">Масштаб</span><select id="diagram-zoom" aria-label="Масштаб"><option value=".25">25%</option><option value=".5">50%</option><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option><option value="2">200%</option></select></label>
+    <label class="diagram-zoom"><span class="diagram-sr">Масштаб</span><select id="diagram-zoom" aria-label="Масштаб"><option value=".1">10%</option><option value=".25">25%</option><option value=".5">50%</option><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option><option value="2">200%</option></select></label>
     <button type="button" id="diagram-plus" aria-label="Увеличить масштаб">+</button>
    </div>
    <button type="button" id="diagram-fit">Вписать</button>

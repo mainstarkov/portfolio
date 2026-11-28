@@ -1,6 +1,8 @@
 "use strict";
 
 function installDiagramCanvas(section, viewport, content) {
+ const minimumScale = .1;
+ const zoomOut = section.querySelector("#diagram-minus");
  const zoomMenu = section.querySelector("#diagram-zoom");
  const minimap = section.querySelector("#diagram-minimap");
  const thumbnail = minimap.querySelector("canvas");
@@ -28,7 +30,7 @@ function installDiagramCanvas(section, viewport, content) {
   stage.style.height = `${Math.ceil(height*scale)}px`;
  }
  function setZoom(wanted, x = viewport.clientWidth / 2, y = viewport.clientHeight / 2) {
-  const next = limits(wanted, .001, 3);
+  const next = limits(wanted, minimumScale, 3);
   const ratio = next / scale;
   const viewportLeft = viewport.getBoundingClientRect().left;
   const oldMargin = stage.getBoundingClientRect().left - viewportLeft + viewport.scrollLeft;
@@ -37,8 +39,9 @@ function installDiagramCanvas(section, viewport, content) {
   content.style.transform = `scale(${next})`;
   content.dataset.zoom = String(next);
   scale = next;
+  zoomOut.disabled = next <= minimumScale;
   sizeStage();
-  const percent = Number((next * 100).toFixed(next < .1 ? 1 : 0));
+  const percent = Math.round(next * 100);
   let option = [...zoomMenu.options].find(item => !item.dataset.custom && Number(item.value) === next);
   if (!option) {
    option = zoomMenu.querySelector("[data-custom]") || new Option();
@@ -72,7 +75,7 @@ function installDiagramCanvas(section, viewport, content) {
  }
 
  zoomMenu.addEventListener("change", () => setZoom(Number(zoomMenu.value)));
- section.querySelector("#diagram-minus").addEventListener("click", () => setZoom(scale / 1.25));
+ zoomOut.addEventListener("click", () => setZoom(scale / 1.25));
  section.querySelector("#diagram-plus").addEventListener("click", () => setZoom(scale * 1.25));
  section.querySelector("#diagram-fit").addEventListener("click", fit);
  viewport.addEventListener("wheel", event => {
