@@ -11,6 +11,9 @@ function createRepoGraph() {
    <div class="diagram-modes" aria-label="Режим схемы">
    <button type="button" data-diagram="overview" aria-pressed="true">Связи</button>
    <button type="button" data-diagram="conditions" aria-pressed="false">Условия</button></div>
+   <label class="diagram-layout">Вид дерева <select id="diagram-layout" aria-label="Вид дерева">
+    <option value="outline">Список</option><option value="horizontal">Слева направо</option><option value="compact">Компактное</option>
+   </select></label>
    <div class="diagram-scale" aria-label="Управление масштабом">
     <button type="button" id="diagram-minus" aria-label="Уменьшить масштаб">−</button>
     <label class="diagram-zoom"><span class="diagram-sr">Масштаб</span><select id="diagram-zoom" aria-label="Масштаб"><option value=".1">10%</option><option value=".25">25%</option><option value=".5">50%</option><option value=".65">65%</option><option value=".8">80%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option><option value="2">200%</option></select></label>
@@ -61,6 +64,11 @@ function createRepoGraph() {
  keepScrollInside(list);
  const content = section.querySelector("#diagram-content");
  const canvas = installDiagramCanvas(section, viewport, content);
+ const layout = section.querySelector("#diagram-layout");
+ layout.addEventListener("change", () => {
+  content.dataset.layout = layout.value;
+  canvas.fit();
+ });
  const allBranches = section.querySelector("#diagram-all");
  const collapseBranches = section.querySelector("#diagram-collapse");
  const disclosureTools = section.querySelector(".diagram-disclosure-tools");
@@ -101,7 +109,10 @@ function createRepoGraph() {
  });
  function showInViewport(element, center) {
   const top = viewport.scrollTop + element.getBoundingClientRect().top - viewport.getBoundingClientRect().top;
-  viewport.scrollTo({top:top - (center ? viewport.clientHeight / 3 : 12),left:0});
+  const left = layout.value === "horizontal"
+   ? viewport.scrollLeft + element.getBoundingClientRect().left - viewport.getBoundingClientRect().left - 12
+   : 0;
+  viewport.scrollTo({top:top - (center ? viewport.clientHeight / 3 : 12),left});
  }
  const modes = [...section.querySelectorAll("[data-diagram]")];
  const fullscreen = section.querySelector("#diagram-full");
@@ -139,7 +150,7 @@ function createRepoGraph() {
   }
   return item;
  }
- function source(edge, label = `↗ ${edge.File}:${edge.Line}`) {
+ function source(edge, label = edge.PageURL ? "Открыть ↗" : `↗ ${edge.File}:${edge.Line}`) {
   const link = sourceLink(data.repo, data.ref, edge, label);
   link.className = "diagram-source";
   link.target = "_blank";
@@ -373,7 +384,11 @@ function createRepoGraph() {
   canvas.refresh();
   section.querySelector("#diagram-summary").textContent = conditions && flow
    ? `${flow.File}:${flow.Line} · сверху вниз в порядке исходника${flow.Limited ? " · показаны первые 180 элементов" : ""}`
-   : "Нажмите на кнопку бота, чтобы раскрыть её условия прямо в дереве.";
+   : tree.querySelector('[data-type="button"]')
+    ? "Нажмите на кнопку бота, чтобы раскрыть её условия прямо в дереве."
+    : data.edges.some(edge => edge.Kind === "site")
+     ? "Переходы между страницами. Вид дерева можно переключить выше."
+     : "Выберите вид дерева для просмотра связей.";
  }
  modes.forEach(button => button.addEventListener("click", () => { mode = button.dataset.diagram; paint(); }));
  handler.addEventListener("change", paint);

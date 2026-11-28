@@ -92,3 +92,24 @@
 .diagram-wide-tree .diagram-card.diagram-disclosure .diagram-toggle{min-height:31px;padding:5px 8px}
 .diagram-disclosure-tools{display:flex;flex-wrap:wrap;gap:6px}
 .diagram-disclosure-tools button:disabled{opacity:.45;cursor:default}
+
+.diagram-layout{display:flex;align-items:center;gap:7px;font-size:.8rem}
+#diagram-content[data-layout=compact] .diagram-node{padding-block:1px}
+#diagram-content[data-layout=compact] .diagram-card{min-height:23px;padding:3px 7px;gap:6px}
+#diagram-content[data-layout=compact] .diagram-text{font-size:.74rem}
+#diagram-content[data-layout=compact] .diagram-toggle{min-height:27px;padding:3px 6px}
+#diagram-content[data-layout=compact] .diagram-children:not(.diagram-button-grid){margin-left:6px;padding-left:12px}
+#diagram-content[data-layout=compact] .diagram-children:not(.diagram-button-grid)>.diagram-node::before,
+#diagram-content[data-layout=compact] .diagram-children:not(.diagram-button-grid)>.diagram-node::after{left:-12px}
+#diagram-content[data-layout=compact] .diagram-children:not(.diagram-button-grid)>.diagram-node::before{width:9px;top:13px}
+#diagram-content[data-layout=compact] .diagram-children:not(.diagram-button-grid)>.diagram-node:last-child::after{height:14px}
+#diagram-content[data-layout=horizontal] .diagram-node{display:flex;align-items:center;gap:20px;padding:4px 0}
+#diagram-content[data-layout=horizontal] .diagram-card{flex:none;max-width:min(340px,72vw)}
+#diagram-content[data-layout=horizontal] .diagram-children:not([hidden]){display:block;border:0;margin:0;padding:0 0 0 20px}
+#diagram-content[data-layout=horizontal] .diagram-children::before{content:"";position:absolute;left:-20px;top:50%;width:20px;border-top:1px solid #a08f83}
+#diagram-content[data-layout=horizontal] .diagram-children>.diagram-node{min-width:0}
+#diagram-content[data-layout=horizontal] .diagram-children>.diagram-node::before{display:block;left:-20px;top:50%;width:20px}
+#diagram-content[data-layout=horizontal] .diagram-children>.diagram-node::after{left:-20px;top:0;bottom:0;height:auto}
+#diagram-content[data-layout=horizontal] .diagram-children>.diagram-node:first-child::after{top:50%}
+#diagram-content[data-layout=horizontal] .diagram-children>.diagram-node:last-child::after{bottom:50%}
+#diagram-content[data-layout=horizontal] .diagram-children>.diagram-node:only-child::after{display:none}

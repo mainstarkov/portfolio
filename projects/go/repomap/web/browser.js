@@ -2,19 +2,19 @@
 const browserPanel = document.createElement("section");
 browserPanel.className = "browser-panel";
 browserPanel.innerHTML = `
- <h2>Построить карту GitHub-репозитория</h2>
+ <h2>Построить карту проекта</h2>
  <form id="repo-form">
-  <label>Ссылка на публичный репозиторий <input id="repo-url" type="url" placeholder="https://github.com/vasypypkin/exemple" required></label>
-  <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><a class="repo-example" href="./">Готовый пример</a><a class="repo-example" href="start.html">Скачать и запустить</a></div>
+  <label>Ссылка на GitHub-репозиторий или сайт <input id="repo-url" type="url" placeholder="https://github.com/vasypypkin/exemple" required></label>
+  <div class="repo-actions"><button class="repo-submit" type="submit">Построить схему</button><a class="repo-example" href="?demo=spy">Пример бота</a><a class="repo-example" href="?demo=site">Пример сайта</a><a class="repo-example" href="start.html">Скачать и запустить</a></div>
  </form>
  <p id="repo-status" role="status"></p>
- <p>Анализ идёт в браузере по исходникам из основной ветки. Для закрытых репозиториев используйте локальную версию.</p>`;
+ <p>Для репозитория карта строится по исходникам. По адресу сайта RepoMap покажет ссылки стартовой страницы, если браузеру доступен её HTML.</p>`;
 document.querySelector(".toolbar").before(browserPanel);
 const heading = document.querySelector("header h1");
 const summary = document.querySelector("header p");
 summary.textContent = `Пример: ${heading.textContent} · ${summary.textContent}`;
 heading.textContent = "RepoMap";
-document.title = "RepoMap · карта GitHub-репозитория";
+document.title = "RepoMap · карта проектов";
 const repoForm = browserPanel.querySelector("form");
 const repoInput = browserPanel.querySelector("input");
 const status = browserPanel.querySelector("#repo-status");
@@ -113,7 +113,7 @@ function el(tag, text, className) {
 }
 function sourceLink(repo, sha, edge, label) {
  const link = el("a", label);
- link.href = `https://github.com/${repo}/blob/${sha}/${edge.File.split("/").map(encodeURIComponent).join("/")}#L${edge.Line}`;
+ link.href = edge.PageURL || `https://github.com/${repo}/blob/${sha}/${edge.File.split("/").map(encodeURIComponent).join("/")}#L${edge.Line}`;
  return link;
 }
 function renderMap(repo, sha, edges, flows, files) {
@@ -144,12 +144,13 @@ function renderMap(repo, sha, edges, flows, files) {
    item.append(target);
   }
   const details = el("details");
-  details.append(el("summary", "Место в исходниках"), sourceLink(repo, sha, edge, `${edge.File}:${edge.Line}`));
+  details.append(el("summary", edge.PageURL ? "Открыть страницу" : "Место в исходниках"),
+   sourceLink(repo, sha, edge, edge.PageURL ? "Перейти ↗" : `${edge.File}:${edge.Line}`));
   item.append(details);
   return item;
  });
  document.querySelector("header h1").textContent = repo;
- document.querySelector("header p").textContent = `${files} файлов изучено · ${edges.length} связей найдено`;
+ document.querySelector("header p").textContent = `${sha ? files + " файлов изучено" : "Стартовая страница"} · ${edges.length} связей найдено`;
  document.title = `${repo} · RepoMap`;
  document.querySelector("#map").replaceChildren(...items);
  document.dispatchEvent(new Event("repomap:changed"));
@@ -190,12 +191,75 @@ async function buildRepository(input) {
   + (failed ? ` Не удалось прочитать файлов: ${failed}.` : "");
 }
 
+async function buildWebsite(url) {
+ status.textContent = "Загружаю стартовую страницу…";
+ const local = url.origin === location.origin && ["127.0.0.1","localhost"].includes(url.hostname);
+ if ((!local && url.protocol !== "https:") || url.username || url.password) {
+  throw new Error("Для сайта укажите публичную HTTPS-ссылку без логина и пароля.");
+ }
+ let response;
+ try {
+  response = await fetch(url, {credentials:"omit",signal:AbortSignal.timeout(8000)});
+ } catch {
+  throw new Error("Браузер не смог прочитать сайт. Если сайт закрывает доступ к HTML из других доменов, вставьте ссылку на его GitHub-репозиторий.");
+ }
+ if (!response.ok) throw new Error(`Сайт вернул HTTP ${response.status}.`);
+ if (!/^text\/html\b/i.test(response.headers.get("content-type") || "")) {
+  throw new Error("По этому адресу нет HTML-страницы.");
+ }
+ const reader = response.body.getReader();
+ const decoder = new TextDecoder();
+ let html = "", bytes = 0;
+ while (true) {
+  const {value,done} = await reader.read();
+  if (done) break;
+  bytes += value.length;
+  if (bytes > 512 * 1024) {
+   await reader.cancel();
+   throw new Error("HTML страницы превышает 512 КБ. Попробуйте ссылку на репозиторий.");
+  }
+  html += decoder.decode(value,{stream:true});
+ }
+ html += decoder.decode();
+ const page = new URL(response.url);
+ const documentFragment = document.createElement("template");
+ documentFragment.innerHTML = html;
+ const pathLabel = address => address.pathname + address.search;
+ const links = new Map();
+ const base = documentFragment.content.querySelector("base[href]")?.getAttribute("href");
+ let linkBase = page;
+ if (base) {
+  try { linkBase = new URL(base,page); } catch {}
+ }
+ for (const anchor of documentFragment.content.querySelectorAll("a[href]:not([download])")) {
+  if (links.size === 120) break;
+  const href = anchor.getAttribute("href").trim();
+  if (!href || href.startsWith("#")) continue;
+  let target;
+  try { target = new URL(href,linkBase); } catch { continue; }
+  if (target.origin !== page.origin || target.username || target.password ||
+      pathLabel(target) === pathLabel(page)) continue;
+  const key = pathLabel(target);
+  if (links.has(key)) continue;
+  target.hash = "";
+  links.set(key,{Kind:"site",Label:"Переход",From:pathLabel(page),To:key,
+   File:"",Line:0,PageURL:target.href});
+ }
+ const edges = [...links.values()];
+ renderMap(page.host, null, edges, [], 1);
+ status.textContent = edges.length
+  ? "Показаны внутренние ссылки из HTML стартовой страницы. Переходы, созданные JavaScript, могут отсутствовать."
+  : "В HTML этой страницы внутренних ссылок не найдено.";
+}
+
 async function runAnalysis(input) {
  for (const control of repoForm.elements) control.disabled = true;
  try {
-  await buildRepository(input);
+  const url = new URL(input.trim());
+  if (url.hostname === "github.com") await buildRepository(input);
+  else await buildWebsite(url);
  } catch (error) {
-  status.textContent = error.message;
+  status.textContent = error instanceof TypeError ? "Проверьте адрес или подключение к сети." : error.message;
  } finally {
   for (const control of repoForm.elements) control.disabled = false;
  }
@@ -204,6 +268,9 @@ repoForm.addEventListener("submit", event => {
  event.preventDefault();
  void runAnalysis(repoInput.value);
 });
-if (new URLSearchParams(location.search).get("demo") === "spy") {
+const demo = new URLSearchParams(location.search).get("demo");
+if (demo === "spy") {
  void runAnalysis("https://github.com/mainstarkov/spy-bot");
+} else if (demo === "site") {
+ void runAnalysis(new URL("../",location.href).href);
 }
